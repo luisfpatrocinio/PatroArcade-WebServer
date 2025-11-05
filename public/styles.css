@@ -314,7 +314,7 @@ tr:hover {
     box-shadow: 0 0 15px #1f6feb;
 }
 
-#gameListItem {
+.gameListItem {
     display: flex;
     text-align: center;
     justify-content: space-between;

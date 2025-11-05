@@ -10,8 +10,7 @@ block content
         h2 Jogos
             ul
                 each game in gameDatabase
-                    #gameListItem
-                        li 
-                            a(href=`/game/${game.id}`).game-link= game.title
+                    li.gameListItem
+                        a(href=`/game/${game.id}`).game-link= game.title
     div.returnButton
         a(onclick="window.location.href='/'") Voltar
