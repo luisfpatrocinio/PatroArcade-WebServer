@@ -10,8 +10,13 @@ import { playersRoutes } from "./routes/playersRoutes";
 import dotenv from "dotenv";
 import { registerRoutes } from "./routes/registerRoutes";
 import { arcadeLoginRoutes } from "./routes/arcadeLoginRoutes";
-import { setSecurityHeaders } from "./middlewares/securityHeaders";
 dotenv.config();
+
+// Import Helmet for security headers
+import helmet from "helmet";
+
+// Import Error Middleware
+import { errorMiddleware } from "./middlewares/errorMiddleware";
 
 // Express
 const express = require("express");
@@ -26,7 +31,7 @@ app.set("views", path.join(__dirname, "../views"));
 app.use(express.static(path.join(__dirname, "../public")));
 
 // Middlewares
-// app.use(setSecurityHeaders);
+app.use(helmet());
 
 // Setup Routes
 app.use("/", homeRoutes);
@@ -37,6 +42,9 @@ app.use("/games", gamesRoutes);
 app.use("/player", playerRoutes);
 app.use("/players", playersRoutes);
 app.use("/register", registerRoutes);
+
+// Error Middleware
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.clear();

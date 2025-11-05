@@ -1,9 +1,13 @@
 import axios from "axios";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 
 const apiURL = process.env.APIURL || "http://localhost:3001";
 
-export async function playerPage(req: Request, res: Response) {
+export async function playerPage(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     console.log("Carregando a página de perfil...");
 
@@ -29,8 +33,7 @@ export async function playerPage(req: Request, res: Response) {
     );
 
     res.render("player", { playerData, gameInfos, saves });
-  } catch (_err) {
-    console.error(_err);
-    res.status(500).send("Erro ao carregar a página de perfil.");
+  } catch (error) {
+    next(error); // Passa o erro para o middleware centralizado
   }
 }
