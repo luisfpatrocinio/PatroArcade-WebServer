@@ -15,4 +15,7 @@ block content
                     | #{tag}#{i < game.tags.length - 1 ? ' - ' : ''}
             
             div.returnButton
-                a(onclick="window.history.back()") Voltar
+                a(id="back-button" href="#") Voltar
+
+block scripts
+    script(src="/scripts/gamePage.js")
