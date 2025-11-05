@@ -6,8 +6,8 @@ block headExtra
 block content
     section
         h2 Registro no PatroArcade:
-        - var apiUrl = "http://localhost:3001"
-        form(id="registerForm")
+        - var apiUrl = apiURL
+        form(id="registerForm" data-api-url=apiUrl data-arcade-id=arcadeId)
             label(for="username") Nome de Usuário
             input(type="text", name="username", id="username")
             label(for="email") Email
@@ -16,42 +16,11 @@ block content
             input(type="password", name="password", id="password")
             label(for="confirmPassword") Confirmar Senha
             input(type="password", name="confirmPassword", id="confirmPassword")
+            p(id="feedback-message" style="text-align: center; color: #ff6b6b;")
             div(style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;")
                 a(href=`/login/${arcadeId}`, style="margin-left: auto;") Já tenho uma conta
             div(style="display: flex; gap: 10px; flex-direction: column;")
                 button(type="button", id="registerButton") Registrar
 
 block scripts 
-    script.
-        document.querySelector('#registerButton').addEventListener('click', function(event) {
-            event.preventDefault();
-            const username = document.querySelector('#username').value;
-            const email = document.querySelector('#email').value;
-            const password = document.querySelector('#password').value;
-            const confirmPassword = document.querySelector('#confirmPassword').value;
-
-            const apiURL = "#{apiUrl}";
-
-            const arcadeId = "#{arcadeId}";
-
-            fetch(`${apiURL}/register/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, email, password, confirmPassword })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.type === 'registerSuccess') {
-                    alert('Registro realizado com sucesso! Faça login para continuar.');
-                    window.location.href = `/login/${arcadeId}`;
-                } else {
-                    alert('Registro falhou: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Ocorreu um erro. Tente novamente.');
-            });
-        });
+    script(src="/scripts/register.js")
