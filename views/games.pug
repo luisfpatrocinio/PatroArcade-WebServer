@@ -13,4 +13,7 @@ block content
                     li.gameListItem
                         a(href=`/game/${game.id}`).game-link= game.title
     div.returnButton
-        a(onclick="window.location.href='/'") Voltar
+        a(id="home-button" href="#") Voltar
+
+block scripts
+    script(src="/scripts/gamesPage.js")
