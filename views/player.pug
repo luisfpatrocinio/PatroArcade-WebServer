@@ -55,6 +55,8 @@ block content
                                     //-     strong #{game.dataLabels[key]}: #{value}
     
     div.returnButton
-        a(onclick="window.history.back()") Voltar
+        a(id="back-button" href="#") Voltar
     
     
+block scripts
+    script(src="/scripts/playerPage.js")
