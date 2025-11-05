@@ -10,8 +10,10 @@ block content
         h2 Jogadores
             ul
                 each player in playerDatabase
-                    #gameListItem
-                        li 
-                            a(href=`/player/${player.userId}`)= player.name
+                    li.gameListItem
+                        a(href=`/player/${player.userId}`)= player.name
     div.returnButton
-        a(onclick="window.location.href='/'") Voltar    
+        a(id="home-button" href="#") Voltar para a Home
+
+block scripts
+    script(src="/scripts/playersPage.js")
