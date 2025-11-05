@@ -1,4 +1,7 @@
 document.querySelector("#submitButton").addEventListener("click", function () {
+  const feedbackElement = document.getElementById("feedback-message");
+  feedbackElement.textContent = ""; // (Limpa erros antigos)
+
   const username = document.querySelector("#username").value;
   const password = document.querySelector("#password").value;
   const apiURL = document.querySelector("#apiURL").value;
@@ -18,13 +21,12 @@ document.querySelector("#submitButton").addEventListener("click", function () {
       if (data.type === "loginSuccess") {
         window.location.href = "/player/" + data.content.id;
       } else {
-        // TODO: Redirecionar para página de erro
-        alert("Falha ao logar: " + data.content);
+        feedbackElement.textContent = "Falha ao logar: " + data.content;
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      alert("An error occurred. Please try again.");
+      feedbackElement.textContent = "Ocorreu um erro. Tente novamente.";    
     });
 });
 

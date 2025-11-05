@@ -1,6 +1,9 @@
 document
   .querySelector("#adminSubmitButton")
   .addEventListener("click", function () {
+    const feedbackElement = document.getElementById("feedback-message");
+    feedbackElement.textContent = ""; // (Limpa erros antigos)
+
     const username = document.querySelector("#username").value;
     const password = document.querySelector("#password").value;
     const arcadeTempId = document.querySelector("#arcadeTempId").value;
@@ -21,7 +24,7 @@ document
         if (data.type === "loginSuccess") {
           window.location.href = "/"; // TODO: Redirecionar para painel de admin.
         } else {
-          alert("Falha ao logar: " + data.content);
+          feedbackElement.textContent = "Falha ao logar: " + data.content;
         }
       });
   });
