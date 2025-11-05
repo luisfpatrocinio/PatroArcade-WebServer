@@ -1,7 +1,6 @@
 import axios from "axios";
 import { Request, Response } from "express";
 import dotenv from "dotenv";
-dotenv.config();
 
 const apiURL = process.env.APIURL || "http://localhost:3001";
 

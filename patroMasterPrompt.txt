@@ -1,0 +1,8 @@
+This project is the "PatroArcade-WebServer", a server-side rendered application using NodeJS, Express, and TypeScript. It renders pages using Pug templates.
+Focus the commit message on the primary component modified:
+src/controllers: Logic for handling routes, fetching API data (from the PatroArcade API), and rendering pages. Use fix for error handling, feat for new data, refactor for logic optimization (e.g., Promise.all), perf for performance improvements.
+src/routes: Defining new or modifying existing URL paths.
+views: Changes to .pug files. Use feat for new UI elements, fix for layout/text bugs or semantic errors (like incorrect loops or IDs), style for purely cosmetic changes.
+public: Client-side assets. Use style for CSS, and fix/feat for client-side JavaScript files.
+chore: Used for build config (tsconfig.json, vercel.json), dependencies (package.json), or .gitignore.
+The commit message must be concise and not long.
