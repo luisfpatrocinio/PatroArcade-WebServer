@@ -1,4 +1,10 @@
+# Ignore environment file containing sensitive keys and configuration
 .env
+# Ignore directory with installed Node.js dependencies
 node_modules
+# Ignore obsolete files or folders kept for reference
 _obsolete
+# Ignore a diff output or temporary diff file
 diff.txt
+# Ignore the distribution/build output directory at project root
+/dist
