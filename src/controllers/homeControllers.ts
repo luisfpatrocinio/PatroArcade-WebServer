@@ -6,21 +6,19 @@ const apiURL = process.env.APIURL || "http://localhost:3001";
 
 export async function homePage(req: Request, res: Response) {
   try {
+    const [newsResponse, gamesResponse, playersResponse] = await Promise.all([
+      axios.get(apiURL + "/latestNews"),
+      axios.get(apiURL + "/game"),
+      axios.get(apiURL + "/player"),
+    ]);
+
     console.log("Carregando a página inicial...");
     console.log("API URL:", apiURL);
-    const {
-      data: { content: latestNews },
-    } = await axios.get(apiURL + "/latestNews");
 
-    // Obter Jogos
-    const {
-      data: { content: games },
-    } = await axios.get(apiURL + "/game");
+    const latestNews = newsResponse.data.content;
+    const games = gamesResponse.data.content;
+    const players = playersResponse.data.content;
 
-    // Obter Maiores Pontuações
-    const {
-      data: { content: players },
-    } = await axios.get(apiURL + "/player");
     players.sort((a: any, b: any) => b.totalScore - a.totalScore);
 
     // // Obter saves

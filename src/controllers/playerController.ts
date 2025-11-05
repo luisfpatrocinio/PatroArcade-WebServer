@@ -11,15 +11,16 @@ export async function playerPage(
   try {
     console.log("Carregando a página de perfil...");
 
-    // Obter dados do jogador: (playerData)
-    const {
-      data: { content: playerData },
-    } = await axios.get(apiURL + "/player/" + req.params.playerId);
+    const [playerResponse, savesResponse] = await Promise.all([
+      axios.get(apiURL + "/player/" + req.params.playerId),
+      axios.get(apiURL + "/player/" + req.params.playerId + "/saves"),
+    ]);
+
+    // Obter dados do player:
+    const playerData = playerResponse.data.content;
 
     // Obter jogos que o player jogou: (saves)
-    const {
-      data: { content: saves },
-    } = await axios.get(apiURL + "/player/" + req.params.playerId + "/saves");
+    const saves = savesResponse.data.content;
     saves.sort((a: any, b: any) => b.lastPlayed - a.lastPlayed);
 
     // Obter informações dos jogos:
