@@ -8,24 +8,36 @@ block headExtra
 block content 
     section#latestNews
       h2 Novidades
-      ul
-        each news in latestNews
-          li 
-            h3= news.title
-            p= news.content
+      //- Verificamos se 'latestNews' não é nulo e tem comprimento > 0
+      if latestNews && latestNews.length > 0
+        ul
+          each news in latestNews
+            li 
+              h3= news.title
+              p= news.content
+      else
+        //- Mensagem de fallback caso a API falhe ou não haja notícias
+        p Não foi possível carregar as novidades no momento.
+
     section#pontuacoes
         h2 Melhores Colocações
-        table
-            thead
-                tr
-                    th Nome
-                    th Pontuação Total
-            tbody
+        //- Verificamos se 'players' não é nulo e tem comprimento > 0
+        if players && players.length > 0
+          table
+              thead
+                  tr
+                      th Nome
+                      th Pontuação Total
+              tbody
                 each player in players
-                    tr
-                        td 
-                            a(href=`/player/${player.userId}`).player-link= player.name
-                        td #{player.totalScore}
+                      tr
+                          td 
+                              a(href=`/player/${player.userId}`).player-link= player.name
+                          td #{player.totalScore}
+        else
+          //- Mensagem de fallback caso a API falhe
+          p Não foi possível carregar as pontuações no momento.
+
     section#links-uteis
       h2 Links Úteis
       ul
@@ -33,7 +45,3 @@ block content
           a(href='/games') Jogos
         li
           a(href='/players') Jogadores
-        li
-            a Fórum
-        //-   a(href='/forum') Fórum
-            
