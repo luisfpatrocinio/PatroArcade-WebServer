@@ -1,5 +1,3 @@
-//- Essa página vai ser carregada com playerData, gameInfos e saves
-
 extends base.pug
 
 block headExtra 
@@ -27,13 +25,13 @@ block content
                         - var minutesAgo = Math.floor(timeDifference / 6e4)
                         - var timeAgo = hoursAgo >= 1 ? (hoursAgo < 24 ? `há ${hoursAgo} horas` : `há ${Math.floor(hoursAgo / 24)} dias`) : `há ${minutesAgo} minutos`
                         | #{timeAgo}    
-                        - if (saves.length > 0)
-                            - var recentGame = gameInfos.find(game => game.id === saves[0].gameId)
-                            p #{recentGame.title}
-                            p #{saves[0].richPresenceText}
+                        
+                        //- CORREÇÃO 1: Acessa o jogo diretamente do primeiro save
+                        - var recentGame = saves[0].game
+                        p #{recentGame.title}
+                        p #{saves[0].richPresenceText}
                 - else 
                     p Não há jogos jogados.
-                    
 
         section#RecentGames
             h2 Jogos Jogados 
@@ -41,22 +39,21 @@ block content
                     - if (saves.length === 0)
                         li Não há jogos salvos.
                     - else
-                    each save in saves
-                        - var game = gameInfos.find(game => game.id === save.gameId)
-                        h3
-                            a.gameName(href=`/game/${save.gameId}`) #{game.title}
+                        each save in saves
+                            //- CORREÇÃO 2: Usa o objeto 'game' que já está dentro do save
+                            - var game = save.game
+                            h3
+                                a.gameName(href=`/game/${game.id}`) #{game.title}
+                            
                             table
                                 each value, key in save.data
-                                    
                                     tr
+                                        //- Acessa os labels do jogo
                                         td #{game.dataLabels[key]}
                                         td #{value}
-                                    //- li
-                                    //-     strong #{game.dataLabels[key]}: #{value}
     
     div.returnButton
         a(id="back-button" href="#") Voltar
-    
     
 block scripts
     script(src="/scripts/playerPage.js")

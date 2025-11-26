@@ -19,14 +19,14 @@ document.querySelector("#submitButton").addEventListener("click", function () {
     .then((response) => response.json())
     .then((data) => {
       if (data.type === "loginSuccess") {
-        window.location.href = "/player/" + data.content.id;
+        window.location.href = "/player/" + data.content.player.id;
       } else {
         feedbackElement.textContent = "Falha ao logar: " + data.content;
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      feedbackElement.textContent = "Ocorreu um erro. Tente novamente.";    
+      feedbackElement.textContent = "Ocorreu um erro. Tente novamente.";
     });
 });
 

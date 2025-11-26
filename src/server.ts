@@ -31,7 +31,23 @@ app.set("views", path.join(__dirname, "../views"));
 app.use(express.static(path.join(__dirname, "../public")));
 
 // Middlewares
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://vercel.live"], // Permite scripts do Vercel e scripts inline (necessário para seus botões)
+        connectSrc: [
+          "'self'",
+          "https://vercel.live",
+          process.env.APIURL || "http://localhost:3001", // <--- AQUI ESTÁ A CORREÇÃO: Permite conectar na sua API
+        ],
+        imgSrc: ["'self'", "data:", "https://vercel.live"], // Permite imagens
+        styleSrc: ["'self'", "'unsafe-inline'"], // Permite estilos inline
+      },
+    },
+  })
+);
 
 // Setup Routes
 app.use("/", homeRoutes);

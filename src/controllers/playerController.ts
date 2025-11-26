@@ -21,20 +21,15 @@ export async function playerPage(
 
     // Obter jogos que o player jogou: (saves)
     const saves = savesResponse.data.content;
-    saves.sort((a: any, b: any) => b.lastPlayed - a.lastPlayed);
 
-    // Obter informações dos jogos:
-    const gameInfos = await Promise.all(
-      saves.map(async (save: any) => {
-        const {
-          data: { content: gameInfo },
-        } = await axios.get(apiURL + "/game/" + save.gameId);
-        return gameInfo;
-      })
+    // Correção na ordenação de datas (strings JSON precisam virar Date)
+    saves.sort(
+      (a: any, b: any) =>
+        new Date(b.lastPlayed).getTime() - new Date(a.lastPlayed).getTime()
     );
 
-    res.render("player", { playerData, gameInfos, saves });
+    res.render("player", { playerData, saves });
   } catch (error) {
-    next(error); // Passa o erro para o middleware centralizado
+    next(error);
   }
 }
