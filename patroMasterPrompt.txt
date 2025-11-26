@@ -5,4 +5,4 @@ src/routes: Defining new or modifying existing URL paths.
 views: Changes to .pug files. Use feat for new UI elements, fix for layout/text bugs or semantic errors (like incorrect loops or IDs), style for purely cosmetic changes.
 public: Client-side assets. Use style for CSS, and fix/feat for client-side JavaScript files.
 chore: Used for build config (tsconfig.json, vercel.json), dependencies (package.json), or .gitignore.
-The commit message must be concise, without subjective explanations.
+The commit message should not be too long; state what has been changed, but without subjective explanations.

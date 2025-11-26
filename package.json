@@ -5,12 +5,14 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
+    "node-cache": "^5.1.2",
     "pug": "^3.0.3"
   },
   "scripts": {
     "start": "node dist/server.js",
-    "dev": "tsx watch src/server.ts"
-  },
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc" 
+},
   "name": "patroarcadepage",
   "version": "1.0.0",
   "description": "Página do PatroArcade",
