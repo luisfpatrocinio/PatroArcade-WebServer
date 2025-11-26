@@ -46,7 +46,14 @@ app.use("/register", registerRoutes);
 // Error Middleware
 app.use(errorMiddleware);
 
-app.listen(port, () => {
-  console.clear();
-  console.log(`PatroPage Server on port: ${port}`);
-});
+// Export required for Vercel Serverless Functions
+export default app;
+
+// Start the server only if the file is executed directly (e.g., npm start local)
+// In serverless, Vercel imports the 'app' above and manages the port automatically.
+if (require.main === module) {
+  app.listen(port, () => {
+    console.clear();
+    console.log(`PatroPage Server on port: ${port}`);
+  });
+}
