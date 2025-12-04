@@ -25,7 +25,7 @@ block content
                 button(type="button", id="submitButton") Entrar
 
                 div(style="margin-top: 5px; margin-bottom: 5px; width: 100%;")
-                    a(href=`${apiURL}/auth/google` style="text-decoration: none;")
+                    a(href=`${apiURL}/auth/google?clientId=${arcadeId}` style="text-decoration: none;")
                         button(type="button" style="background-color: #DB4437; color: white; display: flex; align-items: center; justify-content: center; gap: 10px;") 
                             span Entrar com Google
 
