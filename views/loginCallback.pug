@@ -1,0 +1,28 @@
+extends base.pug
+
+block headExtra
+    title Autenticando...
+
+block content
+    section
+        h2 Autenticando com Google...
+        p Aguarde um momento enquanto redirecionamos você.
+
+block scripts
+    script.
+        // Pegamos as variáveis que o controller enviou
+        const token = "#{token}";
+        const playerId = "#{playerId}";
+
+        console.log("Token recebido:", token);
+
+        if (token && playerId && token !== "undefined") {
+            // 1. Salva o token no LocalStorage (para usar depois se precisar)
+            localStorage.setItem('authToken', token); 
+            
+            // 2. Redireciona para a página do perfil do jogador
+            window.location.href = "/player/" + playerId;
+        } else {
+            // Se algo deu errado, volta pro login com aviso
+            window.location.href = "/login?error=google_auth_failed";
+        }
