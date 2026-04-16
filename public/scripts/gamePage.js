@@ -34,6 +34,7 @@ async function FetchLeaderboard() {
     
     if (!response.ok) {
         console.error("Erro ao buscar leaderboard.");
+        RenderErrorLeaderboard("Não foi possível carregar os recordes no momento. O servidor pode estar em manutenção. Tente novamente mais tarde.");
         return;
     }
 
@@ -43,6 +44,7 @@ async function FetchLeaderboard() {
     RenderLeaderboard(scores);
   } catch (error) {
     console.error("Erro no FetchLeaderboard:", error);
+    RenderErrorLeaderboard("Não foi possível carregar os recordes no momento. O servidor pode estar em manutenção. Tente novamente mais tarde.");
   }
 }
 
@@ -106,6 +108,32 @@ function RenderLeaderboard(scores) {
     tbody.appendChild(tr);
   });
 
+  table.appendChild(tbody);
+  section.appendChild(table);
+
+  gameInfoContainer.appendChild(section);
+}
+
+function RenderErrorLeaderboard(message) {
+  const gameInfoContainer = document.querySelector('.GameInfo');
+  if (!gameInfoContainer) return;
+
+  const section = document.createElement('section');
+  section.id = 'leaderboard';
+  
+  const title = document.createElement('h2');
+  title.innerText = 'Leaderboard';
+  section.appendChild(title);
+
+  const table = document.createElement('table');
+  const tbody = document.createElement('tbody');
+  const tr = document.createElement('tr');
+  const td = document.createElement('td');
+  td.innerText = message;
+  td.style.textAlign = "center";
+  td.style.color = "#ff6b6b"; 
+  tr.appendChild(td);
+  tbody.appendChild(tr);
   table.appendChild(tbody);
   section.appendChild(table);
 
