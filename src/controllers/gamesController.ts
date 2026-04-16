@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 const apiURL = process.env.APIURL || "http://localhost:3001";
 
-export async function gamesPage(req: Request, res: Response) {
+export async function GamesPage(req: Request, res: Response) {
   try {
     console.log("Carregando a página dos jogos...");
 

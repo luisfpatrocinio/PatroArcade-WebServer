@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 
 const apiURL = process.env.APIURL || "http://localhost:3001";
 
-export async function arcadeFirstLoginPage(req: Request, res: Response) {
+export async function ArcadeFirstLoginPage(req: Request, res: Response) {
   try {
     const arcadeTempId = req.params.arcadeTempId;
     console.log("Página de Login de Administrador de Arcade");

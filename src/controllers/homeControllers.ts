@@ -17,7 +17,7 @@ const safeFetch = async (url: string) => {
   }
 };
 
-export async function homePage(
+export async function HomePage(
   req: Request,
   res: Response,
   next: NextFunction

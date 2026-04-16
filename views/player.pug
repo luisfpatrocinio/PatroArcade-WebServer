@@ -46,11 +46,12 @@ block content
                                 a.gameName(href=`/game/${game.id}`) #{game.title}
                             
                             table
-                                each value, key in save.data
-                                    tr
-                                        //- Acessa os labels do jogo
-                                        td #{game.dataLabels[key]}
-                                        td #{value}
+                                tr
+                                    td Pontuação Máxima
+                                    td #{save.score}
+                                tr
+                                    td Tempo de Sessão
+                                    td #{save.sessionTimeInSeconds}s
     
     div.returnButton
         a(id="back-button" href="#") Voltar

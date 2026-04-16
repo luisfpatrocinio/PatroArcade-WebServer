@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { arcadeFirstLoginPage } from "../controllers/arcadeController";
+import { ArcadeFirstLoginPage } from "../controllers/arcadeController";
 
 const router = Router();
 
-router.get("/:arcadeTempId", arcadeFirstLoginPage);
+// Rota que enviara o pin para API
+router.get("/:arcadeTempId", ArcadeFirstLoginPage);
 
 export { router as arcadeLoginRoutes };

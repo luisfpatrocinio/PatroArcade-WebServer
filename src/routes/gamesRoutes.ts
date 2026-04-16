@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { gamesPage } from "../controllers/gamesController";
+import { GamesPage } from "../controllers/gamesController";
 
 const router = Router();
 
-router.get("/", gamesPage);
+// Rota index
+router.get("/", GamesPage);
 
 export { router as gamesRoutes };

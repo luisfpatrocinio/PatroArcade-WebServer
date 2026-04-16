@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { registerPage } from "../controllers/registerController.ts";
+import { RegisterPage } from "../controllers/registerController.ts";
 
 const router = Router();
 
-router.get("/:arcadeId", registerPage);
+// Nova Rota para renderizar página de registro para um novo usuario:
+router.get("/:arcadeId", RegisterPage);
 
 export { router as registerRoutes };
