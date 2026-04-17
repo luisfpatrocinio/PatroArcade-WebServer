@@ -101,6 +101,9 @@ body {
     border: 1px solid rgba(31, 111, 235, 0.5);
     border-radius: 8px;
     padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
 }
 
 /* Estilização da tabela */
@@ -108,6 +111,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 0;
+    white-space: nowrap;
 }
 
 thead {
@@ -303,6 +307,12 @@ tr:hover {
     }
   }
   
+
+.back-button-container {
+    margin-top: 2rem;
+    text-align: center;
+    width: 100%;
+}
 
 .returnButton {
     background-color: #1f6feb;

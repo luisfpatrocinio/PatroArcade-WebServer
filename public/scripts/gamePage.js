@@ -49,8 +49,8 @@ async function FetchLeaderboard() {
 }
 
 function RenderLeaderboard(scores) {
-  const gameInfoContainer = document.querySelector('.GameInfo');
-  if (!gameInfoContainer) return;
+  const leaderboardRoot = document.getElementById('leaderboard-root');
+  if (!leaderboardRoot) return;
 
   const section = document.createElement('section');
   section.id = 'leaderboard';
@@ -63,7 +63,7 @@ function RenderLeaderboard(scores) {
     const p = document.createElement('p');
     p.innerText = 'Nenhuma pontuação registrada ainda.';
     section.appendChild(p);
-    gameInfoContainer.appendChild(section);
+    leaderboardRoot.appendChild(section);
     return;
   }
 
@@ -118,12 +118,12 @@ function RenderLeaderboard(scores) {
   containerDiv.appendChild(table);
   section.appendChild(containerDiv);
 
-  gameInfoContainer.appendChild(section);
+  leaderboardRoot.appendChild(section);
 }
 
 function RenderErrorLeaderboard(message) {
-  const gameInfoContainer = document.querySelector('.GameInfo');
-  if (!gameInfoContainer) return;
+  const leaderboardRoot = document.getElementById('leaderboard-root');
+  if (!leaderboardRoot) return;
 
   const section = document.createElement('section');
   section.id = 'leaderboard';
@@ -144,5 +144,5 @@ function RenderErrorLeaderboard(message) {
   table.appendChild(tbody);
   section.appendChild(table);
 
-  gameInfoContainer.appendChild(section);
+  leaderboardRoot.appendChild(section);
 }

@@ -14,8 +14,11 @@ block content
                 each tag, i in game.tags
                     | #{tag}#{i < game.tags.length - 1 ? ' - ' : ''}
             
-            div.returnButton
-                a(id="back-button" href="#") Voltar
+            div#leaderboard-root
+            
+            div.back-button-container
+                div.returnButton
+                    a(id="back-button" href="#") Voltar
 
 block scripts
     script.
