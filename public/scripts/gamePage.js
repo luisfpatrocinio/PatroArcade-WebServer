@@ -67,11 +67,14 @@ function RenderLeaderboard(scores) {
     return;
   }
 
+  const containerDiv = document.createElement('div');
+  containerDiv.className = 'leaderboard-container';
+
   const table = document.createElement('table');
   
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
-  ['Rank', 'Jogador', 'Pontuação', 'Tempo (s)', 'Status'].forEach(text => {
+  ['Rank', 'Jogador', 'Pontuação', 'Data'].forEach(text => {
     const th = document.createElement('th');
     th.innerText = text;
     headerRow.appendChild(th);
@@ -97,31 +100,23 @@ function RenderLeaderboard(scores) {
     scoreTd.innerText = score.highestScore ?? '-';
     tr.appendChild(scoreTd);
 
-    const timeTd = document.createElement('td');
-    timeTd.innerText = score.sessionTimeInSeconds ?? '-';
-    tr.appendChild(timeTd);
-
-    const statusTd = document.createElement('td');
-    let statusText = 'Visto recentemente';
+    const dateTd = document.createElement('td');
+    let dateText = '-';
     if (score.lastPlayed) {
       const d = new Date(score.lastPlayed);
       if (!isNaN(d.getTime())) {
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
-        const hrs = String(d.getHours()).padStart(2, '0');
-        const mins = String(d.getMinutes()).padStart(2, '0');
-        statusText = `${day}/${month}/${year} ${hrs}:${mins}`;
+        dateText = d.toLocaleDateString();
       }
     }
-    statusTd.innerText = statusText;
-    tr.appendChild(statusTd);
+    dateTd.innerText = dateText;
+    tr.appendChild(dateTd);
 
     tbody.appendChild(tr);
   });
 
   table.appendChild(tbody);
-  section.appendChild(table);
+  containerDiv.appendChild(table);
+  section.appendChild(containerDiv);
 
   gameInfoContainer.appendChild(section);
 }

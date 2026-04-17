@@ -93,28 +93,38 @@ body {
     
   }
 
-  /* Estilização da tabela */
+/* Container Leaderboard */
+.leaderboard-container {
+    margin-top: 2rem;
+    overflow-x: auto;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(31, 111, 235, 0.5);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* Estilização da tabela */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
 thead {
-    background-color: #1f6feb;
     color: white;
 }
 
 th, td {
-    border: 0px solid #ddd;
-    padding: 8px;
-    text-align: left;
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 th {
-    background-color: #1f6feb;
-    color: white;
+    background-color: #0b1524; /* Fundo levemente mais escuro para destaque */
+    color: #1f6feb;
     font-weight: bold;
+    border-bottom: 2px solid #1f6feb;
 }
 
 tr a {
@@ -123,11 +133,11 @@ tr a {
 }
 
 tr:nth-child(even) {
-    background-color: #000000;
+    background-color: rgba(255, 255, 255, 0.03);
 }
 
 tr:hover {
-    background-color: #242424;
+    background-color: rgba(31, 111, 235, 0.15);
 }
 
 /* Barra de experiência */
