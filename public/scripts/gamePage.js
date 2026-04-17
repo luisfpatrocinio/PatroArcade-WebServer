@@ -89,20 +89,32 @@ function RenderLeaderboard(scores) {
     tr.appendChild(rankTd);
 
     const playerTd = document.createElement('td');
-    const playerName = score.player?.name || 'Jogador Desconhecido';
+    const playerName = score.playerName || 'Jogador Desconhecido';
     playerTd.innerText = playerName;
     tr.appendChild(playerTd);
 
     const scoreTd = document.createElement('td');
-    scoreTd.innerText = score.score;
+    scoreTd.innerText = score.highestScore ?? '-';
     tr.appendChild(scoreTd);
 
     const timeTd = document.createElement('td');
-    timeTd.innerText = score.sessionTimeInSeconds;
+    timeTd.innerText = score.sessionTimeInSeconds ?? '-';
     tr.appendChild(timeTd);
 
     const statusTd = document.createElement('td');
-    statusTd.innerText = score.richPresenceText || '-';
+    let statusText = 'Visto recentemente';
+    if (score.lastPlayed) {
+      const d = new Date(score.lastPlayed);
+      if (!isNaN(d.getTime())) {
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        const hrs = String(d.getHours()).padStart(2, '0');
+        const mins = String(d.getMinutes()).padStart(2, '0');
+        statusText = `${day}/${month}/${year} ${hrs}:${mins}`;
+      }
+    }
+    statusTd.innerText = statusText;
     tr.appendChild(statusTd);
 
     tbody.appendChild(tr);
