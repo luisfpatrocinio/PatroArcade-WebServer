@@ -111,7 +111,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 0;
-    white-space: nowrap;
+    table-layout: fixed;
 }
 
 thead {
@@ -341,4 +341,32 @@ tr:hover {
     align-items: center;
     margin: 10px 0;
     flex-direction: column;
+}
+
+/* Responsividade Avançada (Mobile Leaderboard) */
+@media (max-width: 600px) {
+    .leaderboard-container {
+        padding: 5px;
+    }
+    
+    .leaderboard-container table th, 
+    .leaderboard-container table td {
+        padding: 8px 4px;
+        font-size: 0.85rem;
+    }
+
+    /* Coluna Jogador - Truncamento */
+    .leaderboard-container table th:nth-child(2),
+    .leaderboard-container table td:nth-child(2) {
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        max-width: 90px;
+    }
+
+    /* Coluna Data - Ocultar no mobile para poupar espaço */
+    .leaderboard-container table th:nth-child(4),
+    .leaderboard-container table td:nth-child(4) {
+        display: none;
+    }
 }
