@@ -9,61 +9,55 @@ block content
       div(style="background: rgba(255,68,68,0.15); border: 1px solid #ff4444; border-radius: 8px; padding: 12px 20px; margin-bottom: 20px; color: #ff4444;")
         | ⚠️ #{errorMessage}
 
-    //- Cards de resumo
-    div(style="display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;")
-      div(style="background: rgba(0,0,0,0.45); border: 1px solid #1f6feb; border-radius: 10px; padding: 20px 30px; text-align: center; flex: 1; min-width: 160px;")
-        h3(style="margin-top: 0; color: #a0c4ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;") Total de Máquinas
-        p(style="font-size: 2.4rem; color: #ffffff; font-weight: bold; margin: 8px 0;") #{summary.totalMachines}
-      div(style="background: rgba(0,0,0,0.45); border: 1px solid #39d353; border-radius: 10px; padding: 20px 30px; text-align: center; flex: 1; min-width: 160px;")
-        h3(style="margin-top: 0; color: #a0c4ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;") Máquinas Online
-        p(style="font-size: 2.4rem; color: #39d353; font-weight: bold; margin: 8px 0;") #{summary.activeMachines}
-      div(style="background: rgba(0,0,0,0.45); border: 1px solid #888; border-radius: 10px; padding: 20px 30px; text-align: center; flex: 1; min-width: 160px;")
-        h3(style="margin-top: 0; color: #a0c4ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;") Máquinas Offline
-        p(style="font-size: 2.4rem; color: #aaaaaa; font-weight: bold; margin: 8px 0;") #{summary.totalMachines - summary.activeMachines}
+    //- Cards de resumo (Bootstrap Grid)
+    .row.mb-4.g-3.justify-content-center
+      .col-6.col-md-4
+        .card.bg-dark.text-light.border-primary.text-center.h-100
+          .card-body.p-3
+            h6.card-subtitle.mb-2.text-primary.text-uppercase(style="font-size: 0.75rem; letter-spacing: 1px;") Total
+            p.h2.mb-0.fw-bold #{summary.totalMachines}
+      .col-6.col-md-4
+        .card.bg-dark.text-light.border-success.text-center.h-100
+          .card-body.p-3
+            h6.card-subtitle.mb-2.text-success.text-uppercase(style="font-size: 0.75rem; letter-spacing: 1px;") Online
+            p.h2.mb-0.fw-bold #{summary.activeMachines}
+      .col-12.col-md-4
+        .card.bg-dark.text-light.border-secondary.text-center.h-100
+          .card-body.p-3
+            h6.card-subtitle.mb-2.text-secondary.text-uppercase(style="font-size: 0.75rem; letter-spacing: 1px;") Offline
+            p.h2.mb-0.fw-bold #{summary.totalMachines - summary.activeMachines}
 
     //- Tabela de Arcades
     h2 Máquinas Cadastradas
 
-    if arcades.length === 0
-      p(style="text-align: center; color: #888; padding: 20px;") Nenhuma máquina cadastrada para este estabelecimento.
-    else
-      .leaderboard-container
-        table
-          thead
-            tr
-              th ID
-              th Estabelecimento
-              th Status
-              th Uptime
-              th Sessões
-              th Jogo Atual
-          tbody
-            each arcade in arcades
-              tr
-                td: h5.card-title.text-info Máquina ID: #{arcade.id}
-                td #{arcade.name || arcade.location || '-'}
-                td
-                  if arcade.metrics && arcade.metrics.status === 'online'
-                    span(style="color: #39d353; font-weight: bold; background: rgba(57,211,83,0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid #39d353;") ● Online
-                  else if arcade.metrics
-                    span(style="color: #ff4444; font-weight: bold; background: rgba(255,68,68,0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid #ff4444;") ● Offline
-                  else
-                    span(style="color: #888; padding: 3px 10px;") —
-                td
+    .row.mt-4
+      if arcades && arcades.length > 0
+        each arcade in arcades
+          .col-12.col-md-6.col-lg-4.mb-4
+            .card.bg-dark.text-light.border-secondary.h-100.shadow-sm
+              .card-header.d-flex.justify-content-between.align-items-center.border-bottom.border-secondary
+                h5.mb-0.text-info Máquina ID: #{arcade.id}
+                if arcade.metrics && arcade.metrics.status === 'online'
+                  span.badge.bg-success Online
+                else
+                  span.badge.bg-danger Offline
+              .card-body
+                p.card-text
+                  strong Jogo Atual: 
+                  span.text-warning #{arcade.gameName || 'Nenhum'}
+                p.card-text
+                  strong Tempo de Atividade: 
                   if arcade.metrics && arcade.metrics.uptimeMinutes
-                    | #{arcade.metrics.uptimeMinutes} min
+                    span.text-white #{arcade.metrics.uptimeMinutes} min
                   else
-                    span(style="color: #666;") Desligada
-                td
-                  if arcade.metrics
-                    | #{arcade.metrics.totalSessions}
-                  else
-                    span(style="color: #666;") —
-                td
-                  if arcade.metrics && arcade.metrics.currentGameId
-                    span.text-warning= arcade.gameName
-                  else
-                    span(style="color: #666;") Nenhum
+                    span.text-muted Desligada
+                p.card-text
+                  strong Sessões Jogadas: 
+                  span.text-white #{arcade.metrics ? arcade.metrics.totalSessions : 0}
+      else
+        .col-12
+          .alert.alert-secondary.text-center(role="alert")
+            | Nenhuma máquina associada à sua conta no momento.
 
   .back-button-container
     a.returnButton(href="/") Voltar ao Início

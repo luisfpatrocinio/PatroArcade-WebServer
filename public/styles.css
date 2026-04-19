@@ -383,3 +383,11 @@ tr:hover {
         display: none !important;
     }
 }
+/* Correções Mobile-First */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+body { overflow-x: hidden; }
