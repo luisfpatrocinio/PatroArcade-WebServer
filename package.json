@@ -1,7 +1,9 @@
 {
   "dependencies": {
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.0",
     "axios": "^1.7.8",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
@@ -11,8 +13,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "build": "tsc" 
-},
+    "build": "tsc"
+  },
   "name": "patroarcadepage",
   "version": "1.0.0",
   "description": "Página do PatroArcade",
