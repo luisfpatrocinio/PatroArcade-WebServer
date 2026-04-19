@@ -40,7 +40,7 @@ block content
           tbody
             each arcade in arcades
               tr
-                td \##{arcade.id}
+                td: h5.card-title.text-info Máquina ID: #{arcade.id}
                 td #{arcade.name || arcade.location || '-'}
                 td
                   if arcade.metrics && arcade.metrics.status === 'online'
@@ -61,7 +61,7 @@ block content
                     span(style="color: #666;") —
                 td
                   if arcade.metrics && arcade.metrics.currentGameId
-                    span(style="color: #fafa03;") Jogo \##{arcade.metrics.currentGameId}
+                    span.text-warning= arcade.gameName
                   else
                     span(style="color: #666;") Nenhum
 

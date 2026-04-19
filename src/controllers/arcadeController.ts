@@ -97,34 +97,54 @@ export async function DashboardPage(req: Request, res: Response) {
     return res.redirect("/dashboard/arcade/login");
   }
 
-  const authHeader = { Authorization: `Bearer ${token}` };
-
   try {
-    // 1) Buscar todos os arcades deste owner (Multi-Tenant)
-    const arcadesResponse = await axios.get(`${apiURL}/dashboard/admin/arcades`, {
-      headers: authHeader,
+    // 1. Buscar Arcades do dono
+    const arcadesRes = await fetch(`${apiURL}/dashboard/admin/arcades`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    if (!arcadesRes.ok) throw new Error('Falha ao carregar arcades');
+    const arcadesData = await arcadesRes.json() as any;
+    const arcades = arcadesData.content || [];
 
-    const arcades: any[] = arcadesResponse.data?.content ?? [];
+    // 2. Buscar Catálogo de Jogos para traduzir IDs em Nomes
+    let gamesMap: Record<number, string> = {};
+    try {
+      const gamesRes = await fetch(`${apiURL}/games`);
+      if (gamesRes.ok) {
+        const gamesData = await gamesRes.json() as any;
+        // Cria um dicionário: { 1: "Space Squadron", 2: "Tetris" }
+        gamesData.content.forEach((game: any) => {
+          gamesMap[game.id] = game.title;
+        });
+      }
+    } catch (e) {
+      console.error('Aviso: Não foi possível carregar o catálogo de jogos.', e);
+    }
 
-    // 2) Buscar métricas de cada arcade em paralelo (fan-out)
+    // 3. Buscar Métricas de cada Arcade e combinar tudo
     const arcadesWithMetrics = await Promise.all(
-      arcades.map(async (arcade) => {
+      arcades.map(async (arcade: any) => {
         try {
-          const metricsResponse = await axios.get(
-            `${apiURL}/dashboard/arcade/${arcade.id}/metrics`,
-            { headers: authHeader }
-          );
-          const metrics = metricsResponse.data?.content ?? null;
-          return { ...arcade, metrics };
-        } catch {
-          // Se uma máquina falhar nas métricas, não derruba o dashboard inteiro
-          return { ...arcade, metrics: null };
+          const metricsRes = await fetch(`${apiURL}/dashboard/arcade/${arcade.id}/metrics`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const metricsData = await metricsRes.json() as any;
+          const metrics = metricsData.content;
+          
+          // Traduzir o ID para o Nome do Jogo
+          let gameName = "Nenhum";
+          if (metrics && metrics.currentGameId) {
+            gameName = gamesMap[metrics.currentGameId] || `Jogo #${metrics.currentGameId}`;
+          }
+
+          return { ...arcade, metrics, gameName };
+        } catch (error) {
+          return { ...arcade, metrics: null, gameName: "Erro de Conexão" };
         }
       })
     );
 
-    // 3) Calcular totais para os cards de resumo
+    // 4) Calcular totais para os cards de resumo
     const activeMachines = arcadesWithMetrics.filter(
       (a) => a.metrics?.status === "online"
     ).length;
@@ -143,7 +163,7 @@ export async function DashboardPage(req: Request, res: Response) {
     console.error("[DashboardPage] Erro ao buscar dados da API:", error?.message);
 
     // Se a API retornar 401, redirecionar para login
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
+    if (error.status === 401) {
       return res.redirect("/arcadeLogin");
     }
 
