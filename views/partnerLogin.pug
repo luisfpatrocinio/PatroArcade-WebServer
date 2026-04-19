@@ -1,0 +1,35 @@
+extends base.pug
+
+block headExtra
+  title Área do Parceiro | PatroArcade
+
+block content
+  section
+    h1(style="font-size: 1.6rem;") 🕹️ Área do Parceiro
+
+    if errorMessage
+      div(style="background: rgba(255,68,68,0.15); border: 1px solid #ff4444; border-radius: 6px; padding: 10px 16px; margin-bottom: 16px; color: #ff6b6b; font-size: 0.9rem;")
+        | ⚠️ #{errorMessage}
+
+    form(id="partnerLoginForm", method="POST", action="/dashboard/arcade/login")
+      label(for="username") Usuário
+      input(
+        type="text",
+        name="username",
+        id="username",
+        placeholder="seu.usuario",
+        autocomplete="username",
+        required
+      )
+
+      label(for="password") Senha
+      input(
+        type="password",
+        name="password",
+        id="password",
+        placeholder="••••••••",
+        autocomplete="current-password",
+        required
+      )
+
+      button(type="submit", id="partnerLoginButton") Entrar no Painel

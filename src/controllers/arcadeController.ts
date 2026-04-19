@@ -36,12 +36,65 @@ export async function ArcadeFirstLoginPage(req: Request, res: Response) {
   }
 }
 
+export function PartnerLoginPage(req: Request, res: Response) {
+  res.render("partnerLogin", {
+    errorMessage: null,
+  });
+}
+
+export async function PostPartnerLogin(req: Request, res: Response) {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.render("partnerLogin", {
+      errorMessage: "Usuário e senha são obrigatórios.",
+    });
+  }
+
+  try {
+    const loginResponse = await axios.post(
+      `${apiURL}/login/dev`,
+      { username, password },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    const token: string = loginResponse.data?.content?.token;
+
+    if (!token) {
+      return res.render("partnerLogin", {
+        errorMessage: "Resposta inválida da API. Tente novamente.",
+      });
+    }
+
+    // Salva o JWT num cookie HttpOnly — inacessível via JS no browser
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 8 * 60 * 60 * 1000, // 8 horas (mesmo TTL do JWT)
+      sameSite: "lax",
+    });
+
+    return res.redirect("/dashboard/arcade");
+  } catch (error: any) {
+    console.error("[PostPartnerLogin] Erro:", error?.message);
+
+    const apiMessage =
+      axios.isAxiosError(error) && error.response?.data?.content
+        ? error.response.data.content
+        : "Credenciais inválidas ou erro de conexão.";
+
+    return res.render("partnerLogin", {
+      errorMessage: apiMessage,
+    });
+  }
+}
+
 export async function DashboardPage(req: Request, res: Response) {
   // JWT enviado pelo browser via cookie após o login do parceiro
   const token = req.cookies?.token;
 
   if (!token) {
-    return res.redirect("/arcadeLogin");
+    return res.redirect("/dashboard/arcade/login");
   }
 
   const authHeader = { Authorization: `Bearer ${token}` };
