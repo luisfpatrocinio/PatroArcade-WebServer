@@ -2,51 +2,41 @@ extends base.pug
 
 block content
   section#superAdminPanel
-    h1.text-center.mb-4(style="color: #fafa03;") PatroArcade Central de Comando (SuperAdmin)
+    h1.text-center PatroArcade Central de Comando
 
     if errorMessage
       .alert.alert-danger= errorMessage
 
-    //- Global Metrics Cards (Mobile-First)
-    .row.g-3.justify-content-center
-      .col-12.col-md-4
-        .card.bg-dark.text-light.border-primary.text-center.h-100.shadow
-          .card-body
-            h5.card-title.text-primary TOTAL DE MÁQUINAS
-            p.display-4.fw-bold= globalMetrics.totalMachines
-      .col-12.col-md-4
-        .card.bg-dark.text-light.border-success.text-center.h-100.shadow
-          .card-body
-            h5.card-title.text-success MÁQUINAS ONLINE
-            p.display-4.fw-bold= globalMetrics.onlineMachines
-      .col-12.col-md-4
-        .card.bg-dark.text-light.border-info.text-center.h-100.shadow
-          .card-body
-            h5.card-title.text-info TOTAL DE JOGADORES
-            p.display-4.fw-bold= globalMetrics.totalPlayers
+    section#globalStats
+      h2 Estatísticas Globais
+      .arcade-card
+        .stat-row
+          span.label Total de Máquinas
+          span.value= globalMetrics.totalMachines
+        .stat-row
+          span.label Máquinas Online
+          span.value.online= globalMetrics.onlineMachines
+        .stat-row
+          span.label Total de Jogadores
+          span.value= globalMetrics.totalPlayers
 
-    //- Game Catalog Section
-    .row
-      h3.mb-3 Catálogo de Jogos da Plataforma
+    section#gamesManagement
+      h2 Catálogo de Jogos
       if platformGames && platformGames.length > 0
-        each game in platformGames
-          .col-12.col-sm-6.col-lg-4.mb-4
-            .card.bg-dark.text-light.border-secondary.h-100.shadow-sm
-              .card-header.border-bottom.border-secondary
-                h5.mb-0.text-info.text-truncate ID: #{game.id} - #{game.title}
-              .card-body
-                p.card-text
-                  strong Gênero:
-                  span.text-white #{game.genre || 'Arcade'}
-              .card-footer.border-top.border-secondary
-                button.btn.btn-outline-warning.btn-sm.w-100 Ver Detalhes
+        .games-list
+          each game in platformGames
+            .game-item
+              .game-info
+                span.game-id ##{game.id}
+                span.game-title= game.title
+                span.game-genre= game.genre || 'Arcade'
+              button.btn.btn-sm Ver Detalhes
       else
-        .col-12
-          .alert.alert-warning Nenhum jogo encontrado no catálogo.
+        p.text-muted Nenhum jogo encontrado no catálogo.
 
-    .row
-      .col-12
-        button.btn.btn-success.w-100.py-2 + Cadastrar Novo Jogo no Ecossistema
+    section#systemActions
+      h2 Ações do Sistema
+      button.btn.btn-success.w-100.py-2 + Cadastrar Novo Jogo no Ecossistema
 
-  .back-button-container
-    a.returnButton(href="/") Voltar ao Início
+    .back-button-container
+      a.returnButton(href="/") Voltar ao Início

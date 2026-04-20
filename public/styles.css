@@ -413,3 +413,197 @@ section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
 #gamesList h2, #playersList h2 {
   color: #1f6feb;
 }
+
+#superAdminPanel {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#superAdminPanel h1 {
+  color: #fafa03;
+  margin-bottom: 30px;
+}
+
+#globalStats, #gamesManagement, #systemActions {
+  margin-bottom: 30px;
+}
+
+#superAdminPanel h2 {
+  color: #1f6feb;
+  margin-bottom: 15px;
+}
+
+.arcade-card {
+  background: #1a1a1a;
+  border: 1px solid #1f6feb;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #333;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row .label {
+  color: #aaa;
+}
+
+.stat-row .value {
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+.stat-row .value.online {
+  color: #39d353;
+}
+
+.games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.game-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.game-id {
+  color: #1f6feb;
+}
+
+.game-title {
+  color: #fff;
+}
+
+.game-genre {
+  color: #aaa;
+  font-size: 0.85em;
+}
+
+#machineDiagnostic {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.diagnostic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.diagnostic-header h2 {
+  color: #1f6feb;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pulse {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #39d353;
+  animation: pulse-glow 1.5s infinite;
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 5px #39d353; }
+  50% { box-shadow: 0 0 15px #39d353, 0 0 25px #39d353; }
+  100% { box-shadow: 0 0 5px #39d353; }
+}
+
+.status-text {
+  color: #39d353;
+  font-weight: bold;
+}
+
+.telemetry-list, .action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.telemetry-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: #111;
+  border-radius: 6px;
+  border-left: 3px solid #1f6feb;
+}
+
+.telemetry-label {
+  color: #aaa;
+}
+
+.telemetry-value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.telemetry-value.status-online {
+  color: #39d353;
+}
+
+.telemetry-value.status-offline {
+  color: #ff4444;
+}
+
+.actionButton {
+  padding: 12px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
+  background: transparent;
+}
+
+.actionButton:hover:not(:disabled) {
+  box-shadow: 0 0 10px currentColor;
+}
+
+.actionButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.actionButton.btn-danger {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+.actionButton.btn-success {
+  border-color: #39d353;
+  color: #39d353;
+}
+
+#systemStatus h3, #controlPanel h3 {
+  color: #1f6feb;
+  margin-bottom: 15px;
+}

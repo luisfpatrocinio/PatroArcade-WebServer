@@ -1,19 +1,46 @@
 extends base.pug
 
+block headExtra
+  title Diagnostic - Máquina #{arcadeId}
+
 block content
-  section#manageArcadePanel
-    h2.mb-4(style="color: #1f6feb;") Gerenciar Máquina ID: #{arcadeId}
+  section#machineDiagnostic
+    .diagnostic-header
+      h2 Maquina ##{arcadeId}
+      .status-indicator
+        span.pulse
+        span.status-text Online
 
-    .card.bg-dark.text-light.border-primary.mb-4.shadow
-      .card-body.text-center
-        h3.text-warning Status de Operação: Em Desenvolvimento
-        p.text-muted Esta interface exibirá a telemetria avançada em tempo real da máquina futuramente.
+    section#systemStatus
+      h3 Status do Sistema
+      .telemetry-list
+        .telemetry-item
+          .telemetry-label Status de Operacao
+          .telemetry-value.status-online Online
+        .telemetry-item
+          .telemetry-label Jogo Atual
+          .telemetry-value Nenhum
+        .telemetry-item
+          .telemetry-label Tempo de Atividade
+          .telemetry-value 00:00:00
+        .telemetry-item
+          .telemetry-label Sessões Hoje
+          .telemetry-value 0
 
-    .row.g-3.mt-2
-      .col-md-6
-        button.btn.btn-outline-danger.w-100.py-2(disabled) Desligar Máquina Remotamente (Bloqueado)
-      .col-md-6
-        button.btn.btn-outline-success.w-100.py-2(disabled) Enviar Atualização de Jogo (Bloqueado)
+    section#controlPanel
+      h3 Controle Remoto
+      .action-buttons
+        button.actionButton.btn-danger(type="button" disabled) Desligar Máquina
+        button.actionButton.btn-success(type="button" disabled) Atualizar Jogo
 
-    .back-button-container.mt-4
+    .back-button-container
       a.returnButton(href="/dashboard/arcade") Voltar ao Painel
+
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      var currentMachineStatus = 'online';
+      function HandleTelemetryUpdate() {
+        console.log('Telemetry running for machine ' + window.arcadeId);
+      }
+      setInterval(HandleTelemetryUpdate, 5000);
+    });
