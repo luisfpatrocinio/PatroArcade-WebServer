@@ -391,3 +391,17 @@ tr:hover {
   }
 }
 body { overflow-x: hidden; }
+
+body {
+  padding-top: 70px;
+}
+@media (max-width: 576px) {
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .card {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
