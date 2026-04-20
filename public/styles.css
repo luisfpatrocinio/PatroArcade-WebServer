@@ -398,3 +398,8 @@ tr:hover {
     margin-right: 0;
   }
 }
+
+section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
+  max-width: 1000px;
+  width: 95%;
+}
