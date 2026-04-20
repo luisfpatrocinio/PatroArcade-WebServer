@@ -41,8 +41,14 @@ function HandleRegisterSubmit(event) {
         }, 2000);
       } else {
         let errorMessage = "Erro desconhecido";
-        if (data.content && Array.isArray(data.content)) {
-          errorMessage = data.content.map(err => err.message).join(", ");
+        if (data.content) {
+          if (Array.isArray(data.content)) {
+            errorMessage = data.content.map(err => err.message || JSON.stringify(err)).join(", ");
+          } else if (typeof data.content === 'object') {
+            errorMessage = JSON.stringify(data.content);
+          } else {
+            errorMessage = data.content;
+          }
         } else {
           errorMessage = data.message || data.error || "Verifique os dados.";
         }
@@ -55,8 +61,14 @@ function HandleRegisterSubmit(event) {
       let errorMessage = "Erro de conexão. Verifique sua internet.";
       if (error.response && error.response.data) {
         const data = error.response.data;
-        if (data.content && Array.isArray(data.content)) {
-          errorMessage = data.content.map(err => err.message).join(", ");
+        if (data.content) {
+          if (Array.isArray(data.content)) {
+            errorMessage = data.content.map(err => err.message || JSON.stringify(err)).join(", ");
+          } else if (typeof data.content === 'object') {
+            errorMessage = JSON.stringify(data.content);
+          } else {
+            errorMessage = data.content || errorMessage;
+          }
         } else {
           errorMessage = data.message || data.error || errorMessage;
         }
