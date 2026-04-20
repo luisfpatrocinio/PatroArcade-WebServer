@@ -8,7 +8,7 @@ block content
       .alert.alert-danger= errorMessage
 
     //- Global Metrics Cards (Mobile-First)
-    .row.mb-5.g-3
+    .row.mb-5.g-3.justify-content-center
       .col-12.col-md-4
         .card.bg-dark.text-light.border-primary.text-center.h-100.shadow
           .card-body
@@ -26,26 +26,27 @@ block content
             p.display-4.fw-bold= globalMetrics.totalPlayers
 
     //- Game Catalog Section
-    h2.mb-3(style="color: #1f6feb;") Catálogo de Jogos da Plataforma
-    
-    .row.g-4
+    .row.mt-4
+      h3.mb-3 Catálogo de Jogos da Plataforma
       if platformGames && platformGames.length > 0
         each game in platformGames
-          .col-12.col-md-6
-            .card.bg-dark.text-light.border-secondary.h-100
-              .card-body.d-flex.justify-content-between.align-items-center
-                div
-                  h5.card-title.mb-1= game.title
-                  span.badge.bg-secondary ID: #{game.id}
-                a.btn.btn-outline-primary.btn-sm(href=`/game/${game.id}`) Ver Detalhes
+          .col-12.col-sm-6.col-lg-4.mb-4
+            .card.bg-dark.text-light.border-secondary.h-100.shadow-sm
+              .card-header.border-bottom.border-secondary
+                h5.mb-0.text-info.text-truncate ID: #{game.id} - #{game.title}
+              .card-body
+                p.card-text
+                  strong Gênero: 
+                  span.text-white #{game.genre || 'Arcade'}
+              .card-footer.border-top.border-secondary
+                button.btn.btn-outline-warning.btn-sm.w-100 Ver Detalhes
       else
         .col-12
           .alert.alert-warning Nenhum jogo encontrado no catálogo.
 
-    //- Global Action
-    .mt-4
-      button.btn.btn-success.w-100.py-3.fw-bold.shadow-lg
-        | + Cadastrar Novo Jogo no Ecossistema
+    .row.mt-2
+      .col-12
+        button.btn.btn-success.w-100.py-2 + Cadastrar Novo Jogo no Ecossistema
 
   .back-button-container.mt-5
     a.returnButton(href="/") Voltar ao Início
