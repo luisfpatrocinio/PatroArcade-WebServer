@@ -1,10 +1,12 @@
-﻿/* Fundo estrelado */
+/* Fundo estrelado */
 body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
     background: radial-gradient(ellipse at bottom, #0d1b2a, #000000) fixed;
     color: #ffffff;
     overflow-x: hidden;
+    padding-top: 80px;
+    background-color: #0d0d0d;
   }
   
   .stars {
@@ -380,18 +382,14 @@ tr:hover {
         display: none !important;
     }
 }
-/* Corre��es Mobile-First */
+/* Correções Mobile-First */
 @media (max-width: 768px) {
   .container {
     padding-left: 15px;
     padding-right: 15px;
   }
 }
-body { overflow-x: hidden; }
 
-body {
-  padding-top: 70px;
-}
 @media (max-width: 576px) {
   .btn {
     width: 100%;

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { DashboardPage, PartnerLoginPage, PostPartnerLogin, SuperAdminPage } from "../controllers/arcadeController";
+import { DashboardPage, ManageArcadePage, PartnerLoginPage, PostPartnerLogin, SuperAdminPage } from "../controllers/arcadeController";
 import { authMiddleware, superAdminAuthMiddleware } from "../middlewares/authMiddleware";
 import express from "express";
 
@@ -17,3 +17,6 @@ dashboardRoutes.get("/admin/master", authMiddleware, superAdminAuthMiddleware, S
 // Rota de login do parceiro B2B
 dashboardRoutes.get("/arcade/login", PartnerLoginPage);
 dashboardRoutes.post("/arcade/login", PostPartnerLogin);
+
+// Rota de gerenciamento de máquina específica
+dashboardRoutes.get("/arcade/manage/:id", authMiddleware, ManageArcadePage);

@@ -40,11 +40,28 @@ function HandleRegisterSubmit(event) {
           window.location.href = `/login/${arcadeId}`;
         }, 2000);
       } else {
-        feedbackElement.textContent = "Registro falhou: " + (data.message || data.content || data.error || "Verifique os dados e tente novamente.");
+        let errorMessage = "Erro desconhecido";
+        if (data.content && Array.isArray(data.content)) {
+          errorMessage = data.content.map(err => err.message).join(", ");
+        } else {
+          errorMessage = data.message || data.error || "Verifique os dados.";
+        }
+        alert("Registro falhou: " + errorMessage);
+        feedbackElement.textContent = "Registro falhou: " + errorMessage;
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      feedbackElement.textContent = "Ocorreu um erro. Tente novamente.";
+      let errorMessage = "Erro de conexão. Verifique sua internet.";
+      if (error.response && error.response.data) {
+        const data = error.response.data;
+        if (data.content && Array.isArray(data.content)) {
+          errorMessage = data.content.map(err => err.message).join(", ");
+        } else {
+          errorMessage = data.message || data.error || errorMessage;
+        }
+      }
+      alert("Registro falhou: " + errorMessage);
+      feedbackElement.textContent = "Registro falhou: " + errorMessage;
     });
 }

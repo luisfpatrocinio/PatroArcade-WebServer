@@ -12,13 +12,13 @@ html(lang="pt-br")
     
     body
         nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.fixed-top.border-bottom.border-secondary
-          .container
+          .container-fluid.px-4
             a.navbar-brand.d-flex.align-items-center(href="/games")
-              img.me-2(src="/assets/patroArcadeLogo.png" alt="PatroArcade" height="40" style="object-fit: contain;")
-            button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation")
+              img(src="/assets/patroArcadeLogo.png" alt="PatroArcade" height="45" style="object-fit: contain;")
+            button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav")
               span.navbar-toggler-icon
             .collapse.navbar-collapse#navbarNav
-              ul.navbar-nav.ms-auto.align-items-center
+              ul.navbar-nav.ms-auto
                 li.nav-item
                   a.nav-link(href="/games") Início
                 if user && (user.role === 'admin' || user.role === 'superadmin')

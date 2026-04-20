@@ -187,6 +187,22 @@ export async function DashboardPage(req: Request, res: Response) {
   }
 }
 
+export async function ManageArcadePage(req: Request, res: Response) {
+  const { id } = req.params;
+  const token = req.cookies?.token;
+
+  if (!token) {
+    return res.redirect("/dashboard/arcade/login");
+  }
+
+  res.render('arcadeDashboard', { 
+    user: (req as any).user, 
+    message: `Gerenciamento da Máquina ${id} em desenvolvimento.`,
+    arcades: [],
+    title: `Gerenciar Máquina ${id}`
+  });
+}
+
 export async function SuperAdminPage(req: Request, res: Response) {
   // Mocks conforme solicitado
   const globalMetrics = { totalMachines: 150, onlineMachines: 87, totalPlayers: 5430 };
