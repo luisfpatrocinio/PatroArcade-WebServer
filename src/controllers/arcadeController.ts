@@ -199,6 +199,7 @@ export async function ManageArcadePage(req: Request, res: Response) {
     user: (req as any).user, 
     message: `Gerenciamento da Máquina ${id} em desenvolvimento.`,
     arcades: [],
+    summary: { totalMachines: 0, activeMachines: 0 },
     title: `Gerenciar Máquina ${id}`
   });
 }
