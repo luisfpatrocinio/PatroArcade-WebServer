@@ -2,41 +2,37 @@ extends base.pug
 
 block content
   section#superAdminPanel
-    h1.text-center PatroArcade Central de Comando
+    h1 PatroArcade Central
 
     if errorMessage
       .alert.alert-danger= errorMessage
 
-    section#globalStats
-      h2 Estatísticas Globais
-      .arcade-card
-        .stat-row
-          span.label Total de Máquinas
-          span.value= globalMetrics.totalMachines
-        .stat-row
-          span.label Máquinas Online
-          span.value.online= globalMetrics.onlineMachines
-        .stat-row
-          span.label Total de Jogadores
-          span.value= globalMetrics.totalPlayers
+    section#statsSection
+      h2 Métricas Globais
+      .metric-card
+        .metric-label Total de Máquinas
+        .metric-value= globalMetrics.totalMachines
+      .metric-card
+        .metric-label Máquinas Online
+        .metric-value.online= globalMetrics.onlineMachines
+      .metric-card
+        .metric-label Total de Jogadores
+        .metric-value= globalMetrics.totalPlayers
 
-    section#gamesManagement
+    section#gamesCatalog
       h2 Catálogo de Jogos
       if platformGames && platformGames.length > 0
-        .games-list
+        .games-vertical
           each game in platformGames
-            .game-item
-              .game-info
-                span.game-id ##{game.id}
-                span.game-title= game.title
-                span.game-genre= game.genre || 'Arcade'
-              button.btn.btn-sm Ver Detalhes
+            .game-row
+              .game-title= game.title
+              .game-genre= game.genre || 'Arcade'
       else
-        p.text-muted Nenhum jogo encontrado no catálogo.
+        p.text-muted Nenhum jogo no catálogo.
 
-    section#systemActions
-      h2 Ações do Sistema
-      button.btn.btn-success.w-100.py-2 + Cadastrar Novo Jogo no Ecossistema
+    section#adminActions
+      h2 Ações
+      button.btn-success + Cadastrar Novo Jogo
 
     .back-button-container
       a.returnButton(href="/") Voltar ao Início

@@ -201,10 +201,19 @@ export async function ManageArcadePage(req: any, res: any) {
 }
 
 export async function SuperAdminPage(req: Request, res: Response) {
-  // Mocks conforme solicitado
-  const globalMetrics = { totalMachines: 150, onlineMachines: 87, totalPlayers: 5430 };
+  const token = req.cookies?.token;
 
   try {
+    // Buscar Métricas Reais da API
+    const metricsRes = await fetch(`${apiURL}/dashboard/admin/metrics`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    let globalMetrics = { totalMachines: 0, onlineMachines: 0, totalPlayers: 0 };
+    if (metricsRes.ok) {
+      const metricsData = await metricsRes.json() as any;
+      globalMetrics = metricsData.content || globalMetrics;
+    }
+
     // Buscar Catálogo de Jogos da Plataforma
     const gamesRes = await fetch(`${apiURL}/games`);
     let platformGames = [];
@@ -217,17 +226,17 @@ export async function SuperAdminPage(req: Request, res: Response) {
       title: "PatroArcade Central de Comando (SuperAdmin)",
       globalMetrics,
       platformGames,
-      user: (req as any).user // O middleware auth injetou aqui
+      user: (req as any).user
     });
 
   } catch (error: any) {
     console.error("[SuperAdminPage] Erro:", error?.message);
     res.render("superAdminDashboard", {
       title: "PatroArcade Central de Comando (SuperAdmin)",
-      globalMetrics,
+      globalMetrics: { totalMachines: 0, onlineMachines: 0, totalPlayers: 0 },
       platformGames: [],
       user: (req as any).user,
-      errorMessage: "Erro ao carregar catálogo de jogos."
+      errorMessage: "Erro ao carregar métricas."
     });
   }
 }

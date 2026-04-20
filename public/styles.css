@@ -415,13 +415,13 @@ section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
 }
 
 #superAdminPanel {
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
 }
 
 #superAdminPanel h1 {
-  color: #fafa03;
+  color: #ffcc00;
   margin-bottom: 30px;
 }
 
@@ -432,6 +432,73 @@ section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
 #superAdminPanel h2 {
   color: #1f6feb;
   margin-bottom: 15px;
+  margin-top: 25px;
+}
+
+#superAdminPanel h1 {
+  text-align: center;
+}
+
+#statsSection, #gamesCatalog, #adminActions {
+  margin-bottom: 20px;
+}
+
+.metric-card {
+  background: #111;
+  border: 1px solid #1f6feb;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-label {
+  color: #aaa;
+}
+
+.metric-value {
+  color: #ffcc00;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.metric-value.online {
+  color: #39d353;
+}
+
+.games-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.game-row {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.game-title {
+  color: #1f6feb;
+}
+
+.game-genre {
+  color: #aaa;
+}
+
+.btn-success {
+  background: #39d353;
+  color: #000;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  width: 100%;
+  font-weight: bold;
 }
 
 .arcade-card {
