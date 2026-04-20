@@ -30,8 +30,8 @@ block content
     section#controlPanel
       h3 Controle Remoto
       .action-buttons
-        button.actionButton.btn-danger(type="button" disabled) Desligar Maquina
-        button.actionButton.btn-success(type="button" disabled) Atualizar Jogo
+        button.actionButton.btn-danger(type="button" onclick="HandleFeatureDevelopment('Desligar Máquina Remota')") Desligar Maquina
+        button.actionButton.btn-success(type="button" onclick="HandleFeatureDevelopment('Atualizar Jogo Remoto')") Atualizar Jogo
 
     .back-button-container
       a.returnButton(href="/dashboard/arcade") Voltar ao Painel
@@ -44,3 +44,9 @@ block content
       }
       setInterval(HandleTelemetryUpdate, 5000);
     });
+
+  script.
+    function HandleFeatureDevelopment(featureName) {
+      alert('A funcionalidade [' + featureName + '] está marcada no sistema e em fase de desenvolvimento pelo Patrocinio.');
+      console.log('Log Técnico: Handler para ' + featureName + ' pronto para implementação de WebSocket.');
+    }
