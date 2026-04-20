@@ -176,3 +176,35 @@ export async function DashboardPage(req: Request, res: Response) {
     });
   }
 }
+
+export async function SuperAdminPage(req: Request, res: Response) {
+  // Mocks conforme solicitado
+  const globalMetrics = { totalMachines: 150, onlineMachines: 87, totalPlayers: 5430 };
+
+  try {
+    // Buscar Catálogo de Jogos da Plataforma
+    const gamesRes = await fetch(`${apiURL}/games`);
+    let platformGames = [];
+    if (gamesRes.ok) {
+      const gamesData = await gamesRes.json() as any;
+      platformGames = gamesData.content || [];
+    }
+
+    res.render("superAdminDashboard", {
+      title: "PatroArcade Central de Comando (SuperAdmin)",
+      globalMetrics,
+      platformGames,
+      user: (req as any).user // O middleware auth injetou aqui
+    });
+
+  } catch (error: any) {
+    console.error("[SuperAdminPage] Erro:", error?.message);
+    res.render("superAdminDashboard", {
+      title: "PatroArcade Central de Comando (SuperAdmin)",
+      globalMetrics,
+      platformGames: [],
+      user: (req as any).user,
+      errorMessage: "Erro ao carregar catálogo de jogos."
+    });
+  }
+}

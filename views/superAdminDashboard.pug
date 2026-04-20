@@ -1,0 +1,51 @@
+extends base.pug
+
+block content
+  section(style="max-width: 1200px; width: 95%;")
+    h1.text-center.mb-4(style="color: #fafa03;") PatroArcade Central de Comando (SuperAdmin)
+
+    if errorMessage
+      .alert.alert-danger= errorMessage
+
+    //- Global Metrics Cards (Mobile-First)
+    .row.mb-5.g-3
+      .col-12.col-md-4
+        .card.bg-dark.text-light.border-primary.text-center.h-100.shadow
+          .card-body
+            h5.card-title.text-primary TOTAL DE MÁQUINAS
+            p.display-4.fw-bold= globalMetrics.totalMachines
+      .col-12.col-md-4
+        .card.bg-dark.text-light.border-success.text-center.h-100.shadow
+          .card-body
+            h5.card-title.text-success MÁQUINAS ONLINE
+            p.display-4.fw-bold= globalMetrics.onlineMachines
+      .col-12.col-md-4
+        .card.bg-dark.text-light.border-info.text-center.h-100.shadow
+          .card-body
+            h5.card-title.text-info TOTAL DE JOGADORES
+            p.display-4.fw-bold= globalMetrics.totalPlayers
+
+    //- Game Catalog Section
+    h2.mb-3(style="color: #1f6feb;") Catálogo de Jogos da Plataforma
+    
+    .row.g-4
+      if platformGames && platformGames.length > 0
+        each game in platformGames
+          .col-12.col-md-6
+            .card.bg-dark.text-light.border-secondary.h-100
+              .card-body.d-flex.justify-content-between.align-items-center
+                div
+                  h5.card-title.mb-1= game.title
+                  span.badge.bg-secondary ID: #{game.id}
+                a.btn.btn-outline-primary.btn-sm(href=`/game/${game.id}`) Ver Detalhes
+      else
+        .col-12
+          .alert.alert-warning Nenhum jogo encontrado no catálogo.
+
+    //- Global Action
+    .mt-4
+      button.btn.btn-success.w-100.py-3.fw-bold.shadow-lg
+        | + Cadastrar Novo Jogo no Ecossistema
+
+  .back-button-container.mt-5
+    a.returnButton(href="/") Voltar ao Início
