@@ -187,21 +187,17 @@ export async function DashboardPage(req: Request, res: Response) {
   }
 }
 
-export async function ManageArcadePage(req: Request, res: Response) {
-  const { id } = req.params;
-  const token = req.cookies?.token;
-
-  if (!token) {
-    return res.redirect("/dashboard/arcade/login");
+export async function ManageArcadePage(req: any, res: any) {
+  try {
+    const { id } = req.params;
+    res.render('manageArcade', { 
+      arcadeId: id,
+      user: req.user 
+    });
+  } catch (error) {
+    console.error("Erro na rota manage arcade:", error);
+    res.status(500).send("Erro interno ao carregar página de gerenciamento.");
   }
-
-  res.render('arcadeDashboard', { 
-    user: (req as any).user, 
-    message: `Gerenciamento da Máquina ${id} em desenvolvimento.`,
-    arcades: [],
-    summary: { totalMachines: 0, activeMachines: 0 },
-    title: `Gerenciar Máquina ${id}`
-  });
 }
 
 export async function SuperAdminPage(req: Request, res: Response) {

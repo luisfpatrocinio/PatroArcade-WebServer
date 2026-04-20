@@ -5,6 +5,7 @@ body {
     background-color: #0d0d0d;
     color: #ffffff;
     overflow-x: hidden;
+    background: radial-gradient(ellipse at bottom, #0d1b2a, #000000) fixed;
   }
   
   .stars {
