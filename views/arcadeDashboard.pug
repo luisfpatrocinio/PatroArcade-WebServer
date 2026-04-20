@@ -44,13 +44,13 @@ block content
                   span.badge.bg-danger Offline
               .card-body
                 p.card-text
-                  strong Jogo Atual:
+                  strong Jogo Atual: 
                   span.text-warning.text-truncate.d-inline-block.max-w-100 #{arcade.gameName || 'Nenhum'}
                 p.card-text
-                  strong Tempo de Atividade:
+                  strong Tempo de Atividade: 
                   span.text-white #{arcade.metrics && arcade.metrics.uptimeMinutes ? arcade.metrics.uptimeMinutes + ' min' : 'Desligada'}
                 p.card-text
-                  strong Sessões:
+                  strong Sessões: 
                   span.text-white #{arcade.metrics ? arcade.metrics.totalSessions : 0}
               .card-footer.border-top.border-secondary
                 a.btn.btn-outline-info.btn-sm.w-100(href=arcade.managementLink) Gerenciar Máquina

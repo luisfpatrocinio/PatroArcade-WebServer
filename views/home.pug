@@ -31,8 +31,8 @@ block content
               tbody
                 each player in players
                       tr
-                          td 
-                              a(href=`/player/${player.userId}`).player-link= player.name
+td
+                               a(href=`/player/${player.id || player.userId}`).player-link= player.name
                           td #{player.totalScore}
         else
           //- Mensagem de fallback caso a API falhe
