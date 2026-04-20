@@ -2,11 +2,9 @@
 body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
-    background: radial-gradient(ellipse at bottom, #0d1b2a, #000000) fixed;
+    background-color: #0d0d0d;
     color: #ffffff;
     overflow-x: hidden;
-    padding-top: 80px;
-    background-color: #0d0d0d;
   }
   
   .stars {

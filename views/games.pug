@@ -1,11 +1,11 @@
 extends base.pug
 
-block headExtra 
-    title Listagem de Jogos 
+block headExtra
+    title Listagem de Jogos
 
-block content 
-    .container.mt-5.pt-4
-        h2.mb-4.text-info Catálogo de Jogos
+block content
+    section#catalogoJogos
+        h2 Catálogo de Jogos
         .row.g-4
             if gameDatabase && gameDatabase.length > 0
                 each game in gameDatabase
@@ -20,7 +20,7 @@ block content
                 .col-12
                     .alert.alert-warning Nenhum jogo disponível no momento.
 
-    .back-button-container.mt-5
+    .back-button-container
         a.returnButton(href="/") Voltar ao Início
 
 block scripts

@@ -1,11 +1,11 @@
 extends base.pug
 
-block headExtra 
-    title Listagem de Jogadores 
+block headExtra
+    title Listagem de Jogadores
 
-block content 
-    .container.mt-5.pt-4
-        h2.mb-4.text-info Hall da Fama - Jogadores
+block content
+    section#playersList
+        h2 Hall da Fama - Jogadores
         .row.g-4
             if playerDatabase && playerDatabase.length > 0
                 each player in playerDatabase
@@ -20,7 +20,7 @@ block content
                 .col-12
                     .alert.alert-warning Nenhum jogador cadastrado no momento.
 
-    .back-button-container.mt-5
+    .back-button-container
         a.returnButton(href="/") Voltar ao Início
 
 block scripts

@@ -1,14 +1,14 @@
 extends base.pug
 
 block content
-  section(style="max-width: 1200px; width: 95%;")
+  section#superAdminPanel
     h1.text-center.mb-4(style="color: #fafa03;") PatroArcade Central de Comando (SuperAdmin)
 
     if errorMessage
       .alert.alert-danger= errorMessage
 
     //- Global Metrics Cards (Mobile-First)
-    .row.mb-5.g-3.justify-content-center
+    .row.g-3.justify-content-center
       .col-12.col-md-4
         .card.bg-dark.text-light.border-primary.text-center.h-100.shadow
           .card-body
@@ -26,7 +26,7 @@ block content
             p.display-4.fw-bold= globalMetrics.totalPlayers
 
     //- Game Catalog Section
-    .row.mt-4
+    .row
       h3.mb-3 Catálogo de Jogos da Plataforma
       if platformGames && platformGames.length > 0
         each game in platformGames
@@ -36,7 +36,7 @@ block content
                 h5.mb-0.text-info.text-truncate ID: #{game.id} - #{game.title}
               .card-body
                 p.card-text
-                  strong Gênero: 
+                  strong Gênero:
                   span.text-white #{game.genre || 'Arcade'}
               .card-footer.border-top.border-secondary
                 button.btn.btn-outline-warning.btn-sm.w-100 Ver Detalhes
@@ -44,9 +44,9 @@ block content
         .col-12
           .alert.alert-warning Nenhum jogo encontrado no catálogo.
 
-    .row.mt-2
+    .row
       .col-12
         button.btn.btn-success.w-100.py-2 + Cadastrar Novo Jogo no Ecossistema
 
-  .back-button-container.mt-5
+  .back-button-container
     a.returnButton(href="/") Voltar ao Início
