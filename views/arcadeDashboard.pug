@@ -52,7 +52,7 @@ block content
                   strong Sessões: 
                   span.text-white #{arcade.metrics ? arcade.metrics.totalSessions : 0}
               .card-footer.border-top.border-secondary
-                button.btn.btn-outline-info.btn-sm.w-100 Gerenciar Máquina
+                a.btn.btn-outline-info.btn-sm.w-100(href=arcade.managementLink) Gerenciar Máquina
       else
         .col-12
           .alert.alert-secondary.text-center(role="alert")

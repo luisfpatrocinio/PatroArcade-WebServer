@@ -137,9 +137,19 @@ export async function DashboardPage(req: Request, res: Response) {
             gameName = gamesMap[metrics.currentGameId] || `Jogo #${metrics.currentGameId}`;
           }
 
-          return { ...arcade, metrics, gameName };
+          return { 
+            ...arcade, 
+            metrics, 
+            gameName, 
+            managementLink: `/dashboard/arcade/manage/${arcade.id}` 
+          };
         } catch (error) {
-          return { ...arcade, metrics: null, gameName: "Erro de Conexão" };
+          return { 
+            ...arcade, 
+            metrics: null, 
+            gameName: "Erro de Conexão", 
+            managementLink: `/dashboard/arcade/manage/${arcade.id}` 
+          };
         }
       })
     );
