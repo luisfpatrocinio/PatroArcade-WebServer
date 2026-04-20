@@ -404,3 +404,12 @@ section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
   max-width: 1000px;
   width: 95%;
 }
+
+.game-card-custom {
+  background-color: #1a1a1a !important;
+  border-radius: 8px;
+}
+
+#gamesList h2, #playersList h2 {
+  color: #1f6feb;
+}

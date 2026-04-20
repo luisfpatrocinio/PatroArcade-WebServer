@@ -1,27 +1,31 @@
 extends base.pug
 
 block headExtra
-    title Listagem de Jogadores
+  title Listagem de Jogadores
 
 block content
-    section#playersList
-        h2 Hall da Fama - Jogadores
-        .row.g-4
-            if playerDatabase && playerDatabase.length > 0
-                each player in playerDatabase
-                    .col-12.col-sm-6.col-lg-4
-                        .card.bg-dark.text-light.border-secondary.h-100.shadow-sm
-                            .card-body.d-flex.align-items-center
-                                .flex-grow-1
-                                    h5.card-title.mb-1= player.name
-                                    p.card-text.text-muted ID Usuário: #{player.userId}
-                                a.btn.btn-outline-info.btn-sm(href=`/player/${player.userId}`) Perfil
-            else
-                .col-12
-                    .alert.alert-warning Nenhum jogador cadastrado no momento.
+  section#playersList
+    h2 Hall da Fama - Jogadores
+    if playerDatabase && playerDatabase.length > 0
+      table
+        thead
+          tr
+            th Jogador
+            th ID
+            th Perfil
+        tbody
+          each playerData in playerDatabase
+            tr
+              td
+                a.player-link(href=`/player/${playerData.id || playerData.userId}`)= playerData.name
+              td.text-muted #{playerData.id || playerData.userId}
+              td
+                a.btn.btn-outline-info.btn-sm(href=`/player/${playerData.id || playerData.userId}`) Ver
+    else
+      p.text-muted Nenhum jogador cadastrado no momento.
 
-    .back-button-container
-        a.returnButton(href="/") Voltar ao Início
+  .back-button-container
+    a.returnButton(href="/") Voltar ao Início
 
 block scripts
-    script(src="/scripts/playersPage.js")
+  script(src="/scripts/playersPage.js")
