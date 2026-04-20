@@ -1,36 +1,36 @@
 extends base.pug
 
 block headExtra
-  title Diagnostic - Máquina #{arcadeId}
+  title Diagnostic - Maquina #{arcadeId}
 
 block content
   section#machineDiagnostic
     .diagnostic-header
       h2 Maquina ##{arcadeId}
       .status-indicator
-        span.pulse
-        span.status-text Online
+        span.pulse(class=arcadeMetrics.status === 'online' ? 'online' : 'offline')
+        span.status-text(class=arcadeMetrics.status)= arcadeMetrics.status
 
     section#systemStatus
       h3 Status do Sistema
       .telemetry-list
         .telemetry-item
           .telemetry-label Status de Operacao
-          .telemetry-value.status-online Online
+          .telemetry-value(class=arcadeMetrics.status)= arcadeMetrics.status
         .telemetry-item
           .telemetry-label Jogo Atual
-          .telemetry-value Nenhum
+          .telemetry-value= currentGameTitle
         .telemetry-item
           .telemetry-label Tempo de Atividade
-          .telemetry-value 00:00:00
+          .telemetry-value= arcadeMetrics.uptimeMinutes ? arcadeMetrics.uptimeMinutes + ' min' : '0 min'
         .telemetry-item
-          .telemetry-label Sessões Hoje
-          .telemetry-value 0
+          .telemetry-label Sessoes Hoje
+          .telemetry-value= arcadeMetrics.totalSessions || 0
 
     section#controlPanel
       h3 Controle Remoto
       .action-buttons
-        button.actionButton.btn-danger(type="button" disabled) Desligar Máquina
+        button.actionButton.btn-danger(type="button" disabled) Desligar Maquina
         button.actionButton.btn-success(type="button" disabled) Atualizar Jogo
 
     .back-button-container
@@ -38,9 +38,9 @@ block content
 
   script.
     document.addEventListener('DOMContentLoaded', function() {
-      var currentMachineStatus = 'online';
+      var currentMachineStatus = '#{arcadeMetrics.status}';
       function HandleTelemetryUpdate() {
-        console.log('Telemetry running for machine ' + window.arcadeId);
+        console.log('Telemetry running for machine #{arcadeId}');
       }
       setInterval(HandleTelemetryUpdate, 5000);
     });

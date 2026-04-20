@@ -190,9 +190,41 @@ export async function DashboardPage(req: Request, res: Response) {
 export async function ManageArcadePage(req: any, res: any) {
   try {
     const { id } = req.params;
+    const token = req.cookies?.token;
+
+    // Buscar Métricas Reais da Máquina
+    let arcadeMetrics = { status: 'offline', currentGameId: null, uptimeMinutes: 0, totalSessions: 0 };
+    try {
+      const metricsRes = await fetch(`${apiURL}/dashboard/arcade/${id}/metrics`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (metricsRes.ok) {
+        const data = await metricsRes.json() as any;
+        arcadeMetrics = data.content || arcadeMetrics;
+      }
+    } catch (e) {
+      console.error("[ManageArcadePage] Erro ao buscar métricas:", e);
+    }
+
+    // Buscar Jogo Atual
+    let currentGameTitle = 'Nenhum';
+    if (arcadeMetrics.currentGameId) {
+      try {
+        const gameRes = await fetch(`${apiURL}/games/${arcadeMetrics.currentGameId}`);
+        if (gameRes.ok) {
+          const gameData = await gameRes.json() as any;
+          currentGameTitle = gameData.content?.title || 'Jogo #' + arcadeMetrics.currentGameId;
+        }
+      } catch (e) {
+        console.error("[ManageArcadePage] Erro ao buscar jogo:", e);
+      }
+    }
+
     res.render('manageArcade', { 
       arcadeId: id,
-      user: req.user 
+      user: req.user,
+      arcadeMetrics,
+      currentGameTitle
     });
   } catch (error) {
     console.error("Erro na rota manage arcade:", error);
