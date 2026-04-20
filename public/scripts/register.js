@@ -40,7 +40,7 @@ function HandleRegisterSubmit(event) {
           window.location.href = `/login/${arcadeId}`;
         }, 2000);
       } else {
-        feedbackElement.textContent = "Registro falhou: " + data.message;
+        feedbackElement.textContent = "Registro falhou: " + (data.message || data.content || data.error || "Verifique os dados e tente novamente.");
       }
     })
     .catch((error) => {
