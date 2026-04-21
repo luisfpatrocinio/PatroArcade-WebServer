@@ -34,7 +34,10 @@ block content
         button.actionButton.btn-success(type="button" onclick="HandleFeatureDevelopment('Atualizar Jogo Remoto')") Atualizar Jogo
 
     .back-button-container
-      a.returnButton(href="/dashboard/arcade") Voltar ao Painel
+      if user && user.role === 'superadmin'
+        a.returnButton(href="/dashboard/admin/master") Voltar ao Painel Supremo
+      else
+        a.returnButton(href="/dashboard/arcade") Voltar ao Painel
 
   script.
     document.addEventListener('DOMContentLoaded', function() {

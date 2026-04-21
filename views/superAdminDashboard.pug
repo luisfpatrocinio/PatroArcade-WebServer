@@ -27,7 +27,7 @@ block content
             .game-row.align-items-center
               div
                 .game-title Maquina ID: #{arcade.id}
-                .game-genre Dono: #{arcade.userId || 'Desconhecido'}
+                .game-genre Dono: #{arcade.ownerName || arcade.user?.username || arcade.userId || 'Desconhecido'}
               a.btn-outline-info.btn-sm(href=`/dashboard/arcade/manage/${arcade.id}` style="padding: 5px 10px; border-radius: 4px; text-decoration: none;") Gerir
       else
         p.text-muted Nenhuma maquina registrada no servidor.

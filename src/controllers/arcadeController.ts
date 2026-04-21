@@ -273,6 +273,27 @@ export async function SuperAdminPage(req: Request, res: Response) {
       allArcades = arcadesData.content || [];
     }
 
+    // Buscar usuários para mapear nomes
+    let usersMap = new Map();
+    try {
+      const usersRes = await fetch(`${apiURL}/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (usersRes.ok) {
+        const usersData = await usersRes.json() as any;
+        const usersList = usersData.content || [];
+        usersList.forEach((u: any) => usersMap.set(u.id, u.username || u.name || 'User #' + u.id));
+      }
+    } catch (e) {
+      console.log("[SuperAdminPage] usuários não disponíveis, usando fallback");
+    }
+
+    // Injetar ownerName em cada arcade
+    allArcades = allArcades.map((arcade: any) => ({
+      ...arcade,
+      ownerName: arcade.user?.username || usersMap.get(arcade.userId) || 'Desconhecido'
+    }));
+
     res.render("superAdminDashboard", {
       title: "PatroArcade Central de Comando (SuperAdmin)",
       globalMetrics,
