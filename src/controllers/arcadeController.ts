@@ -340,10 +340,10 @@ export async function SuperAdminPage(req: Request, res: Response) {
       }
     } catch (e) { console.error("Erro ao buscar usuários", e); }
 
-    // Injetar ownerName em cada arcade
-    allArcades = allArcades.map((arcade: any) => ({
-      ...arcade,
-      ownerName: arcade.ownerId ? (usersMap[arcade.ownerId] || `User #${arcade.ownerId}`) : 'Desconhecido'
+    // Injetar ownerName em cada arcade com fallback seguro
+    allArcades = allArcades.map((arc: any) => ({
+      ...arc,
+      ownerName: arc.userId === 1 ? "Black Hole Games (Sede)" : (usersMap[arc.userId] || `Usuario #${arc.userId}`)
     }));
 
     res.render("superAdminDashboard", {

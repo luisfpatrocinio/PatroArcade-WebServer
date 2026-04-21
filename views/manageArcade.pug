@@ -32,7 +32,8 @@ block content
           .telemetry-value= arcadeMetrics.uptimeMinutes ? arcadeMetrics.uptimeMinutes + ' min' : '0 min'
         .telemetry-item
           .telemetry-label Dono da Máquina
-          .telemetry-value.text-light= ownerName
+          .telemetry-value
+            a.text-info(href=`/player/${arcadeDetails.userId}`) #{ownerName}
         .telemetry-item
           .telemetry-label Sessoes Hoje
           .telemetry-value= arcadeMetrics.totalSessions || 0

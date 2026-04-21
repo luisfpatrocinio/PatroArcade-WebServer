@@ -11,15 +11,14 @@ export async function PlayerPage(
   try {
     console.log("Carregando a página de perfil...");
 
-    const [playerResponse, scoresResponse] = await Promise.all([
-      axios.get(apiURL + "/player/" + req.params.playerId),
-      axios.get(apiURL + "/player/" + req.params.playerId + "/scores"),
+    const playerId = req.params.playerId;
+    const [playerResponse, scoresResponse, arcadesResponse] = await Promise.all([
+      axios.get(apiURL + "/player/" + playerId),
+      axios.get(apiURL + "/player/" + playerId + "/scores"),
+      axios.get(apiURL + "/dashboard/admin/arcades"),
     ]);
 
-    // Obter dados do player:
     const playerData = playerResponse.data.content;
-
-    // Obter jogos que o player jogou: (scores formatados como saves)
     const scores = scoresResponse.data.content || [];
     const saves = scores.map((score: any) => ({
       game: score.game,
@@ -29,13 +28,29 @@ export async function PlayerPage(
       sessionTimeInSeconds: score.sessionTimeInSeconds,
     }));
 
-    // Correção na ordenação de datas (strings JSON precisam virar Date)
     saves.sort(
       (a: any, b: any) =>
         new Date(b.lastPlayed).getTime() - new Date(a.lastPlayed).getTime()
     );
 
-    res.render("player", { playerData, saves });
+    // Verificar se o jogador está online em alguma máquina
+    let isOnline = false;
+    let currentGameName = null;
+    const allArcades = arcadesResponse.data.content || [];
+    for (const arcade of allArcades) {
+      if (arcade.metrics?.currentPlayerId == playerId) {
+        isOnline = true;
+        if (arcade.metrics.currentGameId) {
+          try {
+            const gameRes = await axios.get(apiURL + "/games/" + arcade.metrics.currentGameId);
+            currentGameName = gameRes.data.content?.title || gameRes.data.title || null;
+          } catch(e) {}
+        }
+        break;
+      }
+    }
+
+    res.render("player", { playerData, saves, isOnline, currentGameName });
   } catch (error) {
     next(error);
   }

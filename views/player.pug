@@ -7,6 +7,12 @@ block content
     div#playerInfo
         section#Profile
             h1 #{playerData.name}
+            if isOnline
+              .status-badge.mb-2
+                span.badge.bg-success.pulse.me-2 Online
+                span.text-warning Jogando agora: #{currentGameName}
+            else
+              span.badge.bg-secondary Offline
 
             div
                 h3 #{playerData.bio}
