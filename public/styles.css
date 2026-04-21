@@ -485,10 +485,42 @@ section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
 
 .game-title {
   color: #1f6feb;
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
 .game-genre {
   color: #aaa;
+}
+
+#gamesList, #playersList {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#gamesList h2, #playersList h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.player-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.player-info a {
+  font-size: 1.1em;
+}
+
+.player-meta {
+  color: #aaa;
+}
+
+.player-login {
+  font-size: 0.85em;
 }
 
 .btn-success {

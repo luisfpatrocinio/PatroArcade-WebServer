@@ -1,24 +1,21 @@
 extends base.pug
 
 block headExtra
-  title Listagem de Jogos
+  title Catálogo de Jogos
 
 block content
   section#gamesList
     h2 Catálogo de Jogos
     if gameDatabase && gameDatabase.length > 0
-      .row.g-4
-        each gameData in gameDatabase
-          .col-12.col-sm-6.col-lg-4
-            .card.game-card-custom.bg-dark.text-light.border-secondary.h-100.shadow-sm
-              .card-body
-                h5.card-title= gameData.title
-                p.card-text.text-muted ID: #{gameData.id}
-              .card-footer.border-top.border-secondary
-                a.btn.btn-outline-primary.btn-sm.w-100(href=`/game/${gameData.id}`) Ver Detalhes
+      each gameData in gameDatabase
+        .card.bg-dark.border-secondary.mb-3.shadow
+          .card-body
+            .game-title= gameData.title
+            .game-genre= 'Gênero: ' + (gameData.genre || 'Arcade')
+          .card-footer.border-secondary
+            a.btn-outline-info(href=`/game/${gameData.id}`) Ver Detalhes
     else
-      .col-12
-        .alert.alert-warning Nenhum jogo disponível no momento.
+      .alert.alert-warning Nenhum jogo disponível no momento.
 
   .back-button-container
     a.returnButton(href="/") Voltar ao Início

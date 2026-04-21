@@ -1,26 +1,28 @@
 extends base.pug
 
 block headExtra
-  title Listagem de Jogadores
+  title Hall da Fama
 
 block content
   section#playersList
     h2 Hall da Fama - Jogadores
     if playerDatabase && playerDatabase.length > 0
-      table
-        thead
-          tr
-            th Jogador
-            th ID
-            th Perfil
-        tbody
-          each playerData in playerDatabase
-            tr
-              td
-                a.player-link(href=`/player/${playerData.id || playerData.userId}`)= playerData.name
-              td.text-muted #{playerData.id || playerData.userId}
-              td
-                a.btn.btn-outline-info.btn-sm(href=`/player/${playerData.id || playerData.userId}`) Ver
+      each playerData in playerDatabase
+        .card.bg-dark.border-secondary.mb-3.shadow
+          .card-body
+            .player-row
+              .player-info
+                a.text-info(href=`/player/${playerData.id || playerData.userId}`)= playerData.name
+              .player-meta
+                if playerData.lastGameId || playerData.lastGame
+                  a.text-warning(href=`/game/${playerData.lastGameId || playerData.lastGame.id}`)= playerData.lastGame?.title || 'Jogo #' + playerData.lastGameId
+                else
+                  span.text-muted Nenhum
+              .player-login
+                if playerData.lastLogin
+                  span.text-muted= new Date(playerData.lastLogin).toLocaleDateString('pt-BR')
+                else
+                  span.text-muted Recentemente
     else
       p.text-muted Nenhum jogador cadastrado no momento.
 
