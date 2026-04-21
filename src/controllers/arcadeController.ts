@@ -202,14 +202,14 @@ export async function ManageArcadePage(req: any, res: any) {
     const token = req.cookies?.token;
 
     // Buscar Métricas Reais da Máquina
-    let arcadeMetrics = { status: 'offline', currentGameId: null, uptimeMinutes: 0, totalSessions: 0 };
+    let arcadeMetrics: any = { status: 'offline', currentGameId: null, currentPlayerId: null, uptimeMinutes: 0, totalSessions: 0 };
     try {
       const metricsRes = await fetch(`${apiURL}/dashboard/arcade/${id}/metrics`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (metricsRes.ok) {
         const data = await metricsRes.json() as any;
-        arcadeMetrics = data.content || arcadeMetrics;
+        arcadeMetrics = { ...arcadeMetrics, ...(data.content || {}) };
       }
     } catch (e) {
       console.error("[ManageArcadePage] Erro ao buscar métricas:", e);
