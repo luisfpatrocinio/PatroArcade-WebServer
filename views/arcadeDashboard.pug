@@ -5,59 +5,41 @@ block content
     h1 Painel de Gestão
 
     if errorMessage
-      div(style="background: rgba(255,68,68,0.15); border: 1px solid #ff4444; border-radius: 8px; padding: 12px 20px; margin-bottom: 20px; color: #ff4444;")
-        | ⚠️ #{errorMessage}
+      .alert.alert-danger= errorMessage
 
     if message
-      div(style="background: rgba(255,193,7,0.15); border: 1px solid #ffc107; border-radius: 8px; padding: 12px 20px; margin-bottom: 20px; color: #ffc107;")
-        | #{message}
+      .alert.alert-warning= message
 
-    .row.g-3.justify-content-center
-      .col-6.col-md-3
-        .card.bg-dark.text-light.border-primary.text-center.h-100
-          .card-body.p-3
-            h6.card-subtitle.mb-2.text-primary.text-uppercase(style="font-size: 0.75rem; letter-spacing: 1px;") Total
-            p.h2.mb-0.fw-bold #{summary.totalMachines}
-      .col-6.col-md-3
-        .card.bg-dark.text-light.border-success.text-center.h-100
-          .card-body.p-3
-            h6.card-subtitle.mb-2.text-success.text-uppercase(style="font-size: 0.75rem; letter-spacing: 1px;") Online
-            p.h2.mb-0.fw-bold #{summary.activeMachines}
-      .col-6.col-md-3
-        .card.bg-dark.text-light.border-secondary.text-center.h-100
-          .card-body.p-3
-            h6.card-subtitle.mb-2.text-secondary.text-uppercase(style="font-size: 0.75rem; letter-spacing: 1px;") Offline
-            p.h2.mb-0.fw-bold #{summary.totalMachines - summary.activeMachines}
+    section#statsSection
+      h2 Suas Métricas
+      .metric-card
+        .metric-label Total de Máquinas
+        .metric-value= summary.totalMachines
+      .metric-card
+        .metric-label Máquinas Online
+        .metric-value.online= summary.activeMachines
 
-    h2 Máquinas Cadastradas
-
-    .row
+    section#myMachines
+      h2 Suas Máquinas
       if arcades && arcades.length > 0
-        each arcade in arcades
-          .col-12.col-sm-6.col-lg-4.mb-4
-            .card.bg-dark.text-light.border-secondary.h-100.shadow-sm
-              .card-header.d-flex.justify-content-between.align-items-center.border-bottom.border-secondary
-                h5.mb-0.text-info Máquina ID: #{arcade.id}
-                if arcade.metrics && arcade.metrics.status === 'online'
-                  span.badge.bg-success Online
-                else
-                  span.badge.bg-danger Offline
-              .card-body
-                p.card-text
-                  strong Jogo Atual: 
-                  span.text-warning.text-truncate.d-inline-block.max-w-100 #{arcade.gameName || 'Nenhum'}
-                p.card-text
-                  strong Tempo de Atividade: 
-                  span.text-white #{arcade.metrics && arcade.metrics.uptimeMinutes ? arcade.metrics.uptimeMinutes + ' min' : 'Desligada'}
-                p.card-text
-                  strong Sessões: 
-                  span.text-white #{arcade.metrics ? arcade.metrics.totalSessions : 0}
-              .card-footer.border-top.border-secondary
-                a.btn.btn-outline-info.btn-sm.w-100(href=arcade.managementLink) Gerenciar Máquina
+        .games-vertical
+          each arcade in arcades
+            .arcade-card.mb-3
+              .diagnostic-header.mb-2
+                h3.text-info(style="margin:0;") Máquina ID: #{arcade.id}
+                .status-indicator
+                  span.pulse(class=arcade.metrics && arcade.metrics.status === 'online' ? 'online' : 'offline')
+                  span.status-text(class=arcade.metrics && arcade.metrics.status === 'online' ? 'online' : 'offline') #{arcade.metrics ? arcade.metrics.status : 'offline'}
+              .stat-row
+                .label Jogo Atual
+                .value.text-warning #{arcade.gameName && arcade.gameName !== 'Nenhum' ? arcade.gameName : 'Aguardando Sincronização...'}
+              .stat-row
+                .label Uptime
+                .value #{arcade.metrics && arcade.metrics.uptimeMinutes ? arcade.metrics.uptimeMinutes + ' min' : '0 min'}
+              .mt-3
+                a.btn.btn-outline-info.w-100(href=arcade.managementLink style="display:block; text-align:center; padding:10px; border-radius:5px;") Acessar Terminal
       else
-        .col-12
-          .alert.alert-secondary.text-center(role="alert")
-            | Nenhuma máquina associada à sua conta no momento.
+        p.text-muted.text-center Nenhuma máquina associada à sua conta.
 
-  .back-button-container
-    a.returnButton(href="/") Voltar ao Início
+    .back-button-container
+      a.returnButton(href="/") Sair
