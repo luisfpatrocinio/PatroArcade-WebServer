@@ -263,10 +263,21 @@ export async function SuperAdminPage(req: Request, res: Response) {
       platformGames = gamesData.content || [];
     }
 
+    // Buscar TODAS as máquinas da plataforma
+    const arcadesRes = await fetch(`${apiURL}/dashboard/admin/arcades`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    let allArcades = [];
+    if (arcadesRes.ok) {
+      const arcadesData = await arcadesRes.json() as any;
+      allArcades = arcadesData.content || [];
+    }
+
     res.render("superAdminDashboard", {
       title: "PatroArcade Central de Comando (SuperAdmin)",
       globalMetrics,
       platformGames,
+      allArcades,
       user: (req as any).user
     });
 
@@ -276,6 +287,7 @@ export async function SuperAdminPage(req: Request, res: Response) {
       title: "PatroArcade Central de Comando (SuperAdmin)",
       globalMetrics: { totalMachines: 0, onlineMachines: 0, totalPlayers: 0 },
       platformGames: [],
+      allArcades: [],
       user: (req as any).user,
       errorMessage: "Erro ao carregar métricas."
     });

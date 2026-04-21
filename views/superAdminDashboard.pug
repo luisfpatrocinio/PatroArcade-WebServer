@@ -19,8 +19,21 @@ block content
         .metric-label Total de Jogadores
         .metric-value= globalMetrics.totalPlayers
 
+    section#allMachines
+      h2 Controle de Máquinas
+      if allArcades && allArcades.length > 0
+        .games-vertical
+          each arcade in allArcades
+            .game-row.align-items-center
+              div
+                .game-title Maquina ID: #{arcade.id}
+                .game-genre Dono: #{arcade.userId || 'Desconhecido'}
+              a.btn-outline-info.btn-sm(href=`/dashboard/arcade/manage/${arcade.id}` style="padding: 5px 10px; border-radius: 4px; text-decoration: none;") Gerir
+      else
+        p.text-muted Nenhuma maquina registrada no servidor.
+
     section#gamesCatalog
-      h2 Catálogo de Jogos
+      h2 Catalogo de Jogos
       if platformGames && platformGames.length > 0
         .games-vertical
           each game in platformGames
