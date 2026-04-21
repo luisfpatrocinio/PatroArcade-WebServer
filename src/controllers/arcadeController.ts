@@ -318,3 +318,21 @@ export async function SuperAdminPage(req: Request, res: Response) {
 export async function RegisterGamePage(req: Request, res: Response) {
   res.render('registerGame', { user: (req as any).user, title: "Cadastrar Novo Jogo" });
 }
+
+export async function PostRegisterGame(req: Request, res: Response) {
+  const { title, genre, description } = req.body;
+  const token = req.cookies?.token;
+
+  try {
+    const response = await fetch(`${apiURL}/games`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ title, genre, description })
+    });
+    if (response.ok) return res.redirect('/dashboard/admin/master');
+    else throw new Error("Falha na API");
+  } catch (error) {
+    console.error(error);
+    res.render('registerGame', { user: (req as any).user, error: "Erro ao cadastrar jogo. Tente novamente." });
+  }
+}
