@@ -301,7 +301,7 @@ export async function SuperAdminPage(req: Request, res: Response) {
     // Injetar ownerName em cada arcade
     allArcades = allArcades.map((arcade: any) => ({
       ...arcade,
-      ownerName: arcade.userId ? (usersMap[arcade.userId] || `User #${arcade.userId}`) : 'Desconhecido'
+      ownerName: arcade.ownerId ? (usersMap[arcade.ownerId] || `User #${arcade.ownerId}`) : 'Desconhecido'
     }));
 
     res.render("superAdminDashboard", {
