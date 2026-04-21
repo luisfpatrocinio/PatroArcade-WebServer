@@ -249,14 +249,20 @@ export async function ManageArcadePage(req: any, res: any) {
       }
     }
 
+    // Fallback para nomes conhecidos
+    if (ownerName.startsWith("User #")) {
+      const mocks: Record<number, string> = { 1: "Black Hole Games (Sede)", 2: "Bar do Zé" };
+      ownerName = mocks[arcadeDetails?.userId] || ownerName;
+    }
+
     // Buscar Jogo Atual
-    let currentGameTitle = 'Nenhum';
+    let currentGameName = "Aguardando Sincronização...";
     if (arcadeMetrics.currentGameId) {
       try {
         const gameRes = await fetch(`${apiURL}/games/${arcadeMetrics.currentGameId}`);
         if (gameRes.ok) {
-          const gameData = await gameRes.json() as any;
-          currentGameTitle = gameData.content?.title || 'Jogo #' + arcadeMetrics.currentGameId;
+          const gData = await gameRes.json() as any;
+          currentGameName = gData.content?.title || gData.title || `Jogo ID ${arcadeMetrics.currentGameId}`;
         }
       } catch (e) {
         console.error("[ManageArcadePage] Erro ao buscar jogo:", e);
@@ -270,7 +276,7 @@ export async function ManageArcadePage(req: any, res: any) {
         const playerRes = await fetch(`${apiURL}/players/${arcadeMetrics.currentPlayerId}`);
         if (playerRes.ok) {
           const playerData = await playerRes.json() as any;
-          currentPlayer = playerData.content;
+          currentPlayer = playerData.content || playerData;
         }
       } catch(e) { console.error("Erro ao buscar jogador atual", e); }
     }
@@ -281,7 +287,7 @@ export async function ManageArcadePage(req: any, res: any) {
       arcadeMetrics,
       arcadeDetails,
       ownerName,
-      currentGameTitle,
+      currentGameName,
       currentPlayer
     });
   } catch (error) {
@@ -375,10 +381,15 @@ export async function PostRegisterGame(req: Request, res: Response) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ title, genre, description })
     });
-    if (response.ok) return res.redirect('/dashboard/admin/master');
-    else throw new Error("Falha na API");
-  } catch (error) {
+    if (response.ok) {
+      return res.redirect('/dashboard/admin/master');
+    } else {
+      const errorData = await response.json() as any;
+      const apiMsg = errorData.message || errorData.error || "Dados inválidos";
+      throw new Error(apiMsg);
+    }
+  } catch (error: any) {
     console.error(error);
-    res.render('registerGame', { user: (req as any).user, error: "Erro ao cadastrar jogo. Tente novamente." });
+    res.render('registerGame', { user: (req as any).user, error: error.message || "Erro ao cadastrar jogo." });
   }
 }
