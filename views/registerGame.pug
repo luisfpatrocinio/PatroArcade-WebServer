@@ -1,0 +1,26 @@
+extends base.pug
+
+block headExtra
+  title Cadastrar Novo Jogo
+
+block content
+  section#registerGamePanel
+    h2 Cadastrar Novo Jogo
+
+    form(method="POST" action="/dashboard/admin/master/games/new")
+      .form-group.mb-3
+        label(for="title") Título do Jogo
+        input.form-control.bg-dark.text-light.border-secondary(type="text" name="title" id="title" required placeholder="Ex: Space Invaders")
+
+      .form-group.mb-3
+        label(for="genre") Gênero
+        input.form-control.bg-dark.text-light.border-secondary(type="text" name="genre" id="genre" required placeholder="Ex: Arcade, Puzzle, Ação")
+
+      .form-group.mb-3
+        label(for="description") Descrição
+        textarea.form-control.bg-dark.text-light.border-secondary(name="description" id="description" rows="4" placeholder="Descrição do jogo...")
+
+      button.btn.btn-success.w-100(type="submit") Salvar Jogo
+
+    .back-button-container.mt-4
+      a.returnButton(href="/dashboard/admin/master") Voltar ao Painel

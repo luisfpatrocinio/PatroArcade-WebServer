@@ -314,3 +314,7 @@ export async function SuperAdminPage(req: Request, res: Response) {
     });
   }
 }
+
+export async function RegisterGamePage(req: Request, res: Response) {
+  res.render('registerGame', { user: (req as any).user, title: "Cadastrar Novo Jogo" });
+}
