@@ -1,51 +1,56 @@
 extends base.pug
 
 block content
-  section#superAdminPanel
-    h1 PatroArcade Central
+  .container.py-4
+    section#superAdminPanel
+      h1.text-center.mb-4 PatroArcade Central
 
-    if errorMessage
-      .alert.alert-danger= errorMessage
+      if errorMessage
+        .alert.alert-danger.mb-4= errorMessage
 
-    section#statsSection
-      h2 Métricas Globais
-      .metric-card
-        .metric-label Total de Máquinas
-        .metric-value= globalMetrics.totalMachines
-      .metric-card
-        .metric-label Máquinas Online
-        .metric-value.online= globalMetrics.onlineMachines
-      .metric-card
-        .metric-label Total de Jogadores
-        .metric-value= globalMetrics.totalPlayers
+      section#statsSection.mb-4
+        h2.text-center.mb-3 Métricas Globais
+        .row
+          .col-md-4
+            .metric-card
+              .metric-label Total de Máquinas
+              .metric-value= globalMetrics.totalMachines
+          .col-md-4
+            .metric-card
+              .metric-label Máquinas Online
+              .metric-value.online= globalMetrics.onlineMachines
+          .col-md-4
+            .metric-card
+              .metric-label Total de Jogadores
+              .metric-value= globalMetrics.totalPlayers
 
-    section#allMachines
-      h2 Controle de Máquinas
-      if allArcades && allArcades.length > 0
-        .games-vertical
-          each arcade in allArcades
-            .game-row.align-items-center
-              div
-                .game-title Maquina ID: #{arcade.id}
-                .game-genre Dono: #{arcade.ownerName || arcade.user?.username || arcade.userId || 'Desconhecido'}
-              a.btn-outline-info.btn-sm(href=`/dashboard/arcade/manage/${arcade.id}` style="padding: 5px 10px; border-radius: 4px; text-decoration: none;") Gerir
-      else
-        p.text-muted Nenhuma maquina registrada no servidor.
+      section#allMachines.mb-4
+        h2.text-center.mb-3 Controle de Máquinas
+        if allArcades && allArcades.length > 0
+          .games-vertical
+            each arcade in allArcades
+              .game-row.align-items-center
+                div
+                  .game-title Máquina ID: #{arcade.id}
+                  .game-genre Dono: #{arcade.ownerName}
+                a.btn-outline-info.btn-sm.text-decoration-none(href=`/dashboard/arcade/manage/${arcade.id}`) Gerir
+        else
+          p.text-muted.text-center Nenhuma máquina registrada no servidor.
 
-    section#gamesCatalog
-      h2 Catalogo de Jogos
-      if platformGames && platformGames.length > 0
-        .games-vertical
-          each game in platformGames
-            .game-row
-              .game-title= game.title
-              .game-genre= game.genre || 'Arcade'
-      else
-        p.text-muted Nenhum jogo no catálogo.
+      section#gamesCatalog.mb-4
+        h2.text-center.mb-3 Catálogo de Jogos
+        if platformGames && platformGames.length > 0
+          .games-vertical
+            each game in platformGames
+              .game-row
+                .game-title= game.title
+                .game-genre= game.genre || 'Arcade'
+        else
+          p.text-muted.text-center Nenhum jogo no catálogo.
 
-    section#adminActions
-      h2 Ações
-      a.btn-success(href="/dashboard/admin/master/games/new") + Cadastrar Novo Jogo
+      section#adminActions.text-center.mt-5
+        h2.mb-3 Ações
+        a.btn-success(href="/dashboard/admin/master/games/new") + Cadastrar Novo Jogo
 
-    .back-button-container
+    .back-button-container.mt-5
       a.returnButton(href="/") Voltar ao Início
