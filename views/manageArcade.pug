@@ -21,6 +21,13 @@ block content
           .telemetry-label Jogo Atual
           .telemetry-value= currentGameTitle
         .telemetry-item
+          .telemetry-label Jogador Atual
+          .telemetry-value
+            if currentPlayer
+              a.text-info(href=`/player/${currentPlayer.id}`) #{currentPlayer.name} (ID: #{currentPlayer.id})
+            else
+              span.text-muted Nenhum (Livre)
+        .telemetry-item
           .telemetry-label Tempo de Atividade
           .telemetry-value= arcadeMetrics.uptimeMinutes ? arcadeMetrics.uptimeMinutes + ' min' : '0 min'
         .telemetry-item

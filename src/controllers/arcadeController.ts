@@ -229,11 +229,24 @@ export async function ManageArcadePage(req: any, res: any) {
       }
     }
 
+    // Buscar Jogador Atual
+    let currentPlayer = null;
+    if (arcadeMetrics.currentPlayerId) {
+      try {
+        const playerRes = await fetch(`${apiURL}/players/${arcadeMetrics.currentPlayerId}`);
+        if (playerRes.ok) {
+          const playerData = await playerRes.json() as any;
+          currentPlayer = playerData.content;
+        }
+      } catch(e) { console.error("Erro ao buscar jogador atual", e); }
+    }
+
     res.render('manageArcade', { 
       arcadeId: id,
       user: req.user,
       arcadeMetrics,
-      currentGameTitle
+      currentGameTitle,
+      currentPlayer
     });
   } catch (error) {
     console.error("Erro na rota manage arcade:", error);
