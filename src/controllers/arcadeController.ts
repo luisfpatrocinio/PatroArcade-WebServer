@@ -215,6 +215,40 @@ export async function ManageArcadePage(req: any, res: any) {
       console.error("[ManageArcadePage] Erro ao buscar métricas:", e);
     }
 
+    // Buscar Detalhes da Máquina (para saber o dono)
+    let arcadeDetails: any = { id, userId: null };
+    try {
+      const detailsRes = await fetch(`${apiURL}/dashboard/arcade/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (detailsRes.ok) {
+        const detailsData = await detailsRes.json() as any;
+        arcadeDetails = { ...arcadeDetails, ...(detailsData.content || {}) };
+      }
+    } catch (e) {
+      console.error("[ManageArcadePage] Erro ao buscar detalhes:", e);
+    }
+
+    // Buscar Dono da Máquina
+    let ownerName = "Desconhecido";
+    if (arcadeDetails.userId) {
+      try {
+        const userRes = await fetch(`${apiURL}/users/${arcadeDetails.userId}`, { 
+          headers: { Authorization: `Bearer ${token}` } 
+        });
+        if (userRes.ok) {
+          const userData = await userRes.json() as any;
+          const user = userData.content || userData;
+          ownerName = user.name || user.username || `User #${arcadeDetails.userId}`;
+        } else {
+          ownerName = `User #${arcadeDetails.userId}`;
+        }
+      } catch (e) {
+        console.error("Erro ao buscar dados do dono da máquina", e);
+        ownerName = `User #${arcadeDetails.userId}`;
+      }
+    }
+
     // Buscar Jogo Atual
     let currentGameTitle = 'Nenhum';
     if (arcadeMetrics.currentGameId) {
@@ -245,6 +279,8 @@ export async function ManageArcadePage(req: any, res: any) {
       arcadeId: id,
       user: req.user,
       arcadeMetrics,
+      arcadeDetails,
+      ownerName,
       currentGameTitle,
       currentPlayer
     });

@@ -31,6 +31,9 @@ block content
           .telemetry-label Tempo de Atividade
           .telemetry-value= arcadeMetrics.uptimeMinutes ? arcadeMetrics.uptimeMinutes + ' min' : '0 min'
         .telemetry-item
+          .telemetry-label Dono da Máquina
+          .telemetry-value.text-light= ownerName
+        .telemetry-item
           .telemetry-label Sessoes Hoje
           .telemetry-value= arcadeMetrics.totalSessions || 0
 
