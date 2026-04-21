@@ -74,6 +74,15 @@ export async function PostPartnerLogin(req: Request, res: Response) {
       sameSite: "lax",
     });
 
+    // Decodifica o token para verificar a role
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64));
+    const decoded = JSON.parse(jsonPayload);
+
+    if (decoded.role === 'superadmin') {
+      return res.redirect("/dashboard/admin/master");
+    }
     return res.redirect("/dashboard/arcade");
   } catch (error: any) {
     console.error("[PostPartnerLogin] Erro:", error?.message);

@@ -603,9 +603,24 @@ section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
   100% { box-shadow: 0 0 5px #39d353; }
 }
 
+.pulse.offline {
+  background: #ff4444;
+  animation: pulse-glow-red 1.5s infinite;
+}
+
+@keyframes pulse-glow-red {
+  0% { box-shadow: 0 0 5px #ff4444; }
+  50% { box-shadow: 0 0 15px #ff4444, 0 0 25px #ff4444; }
+  100% { box-shadow: 0 0 5px #ff4444; }
+}
+
 .status-text {
   color: #39d353;
   font-weight: bold;
+}
+
+.status-text.offline, .telemetry-value.offline {
+  color: #ff4444;
 }
 
 .telemetry-list, .action-buttons {
