@@ -498,6 +498,20 @@ section#superAdminPanel, section#arcadeDashboard, section#manageArcadePanel {
   margin: 0 auto;
 }
 
+#gamesList .card {
+  padding: 20px;
+  border-width: 2px;
+}
+
+#gamesList .card:hover {
+  border-color: #1f6feb;
+  box-shadow: 0 0 15px rgba(31, 111, 235, 0.3);
+}
+
+#gamesList .game-title {
+  margin-bottom: 8px;
+}
+
 #gamesList h2, #playersList h2 {
   text-align: center;
   margin-bottom: 20px;

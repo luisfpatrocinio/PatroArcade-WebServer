@@ -8,12 +8,10 @@ block content
     h2 Catálogo de Jogos
     if gameDatabase && gameDatabase.length > 0
       each gameData in gameDatabase
-        .card.bg-dark.border-secondary.mb-3.shadow
-          .card-body
-            .game-title= gameData.title
-            .game-genre= 'Gênero: ' + (gameData.genre || 'Arcade')
-          .card-footer.border-secondary
-            a.btn-outline-info(href=`/game/${gameData.id}`) Ver Detalhes
+        .card.bg-dark.border-secondary.mb-4.p-4.shadow
+          .game-title= gameData.title
+          .game-genre= 'Gênero: ' + (gameData.genre || 'Arcade')
+          a.btn-outline-info.d-block.mt-3(href=`/game/${gameData.id}`) Ver Detalhes
     else
       .alert.alert-warning Nenhum jogo disponível no momento.
 
