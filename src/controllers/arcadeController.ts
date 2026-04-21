@@ -378,15 +378,24 @@ export async function PostRegisterGame(req: Request, res: Response) {
   try {
     const response = await fetch(`${apiURL}/games`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${token}` 
+      },
       body: JSON.stringify({ title, genre, description })
     });
+
     if (response.ok) {
       return res.redirect('/dashboard/admin/master');
     } else {
-      const errorData = await response.json() as any;
-      const apiMsg = errorData.message || errorData.error || "Dados inválidos";
-      throw new Error(apiMsg);
+      const errorText = await response.text();
+      console.error("Erro da API (Raw):", errorText);
+      let message = "Erro ao cadastrar: A API retornou um erro inesperado.";
+      try {
+        const errorData = JSON.parse(errorText);
+        message = errorData.message || errorData.content || message;
+      } catch(e) {}
+      return res.render('registerGame', { user: (req as any).user, error: message });
     }
   } catch (error: any) {
     console.error(error);
