@@ -3,52 +3,64 @@ import { Request, Response } from "express";
 
 const apiURL = process.env.APIURL || "http://localhost:3001";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILITÁRIO: Fetch blindado — nunca explode com "Unexpected token <"
+// ─────────────────────────────────────────────────────────────────────────────
+async function safeFetch(
+  url: string,
+  options: RequestInit = {}
+): Promise<{ ok: boolean; status: number; data: any }> {
+  try {
+    const res = await fetch(url, options);
+    const contentType = res.headers.get("content-type") || "";
+    let data: any = null;
+
+    if (contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      const text = await res.text();
+      console.warn(`[safeFetch] Resposta não-JSON de ${url} (${res.status}):`, text.slice(0, 200));
+      // Tenta parsear mesmo assim (API pode esquecer o Content-Type)
+      try { data = JSON.parse(text); } catch (_) { data = { message: text }; }
+    }
+
+    return { ok: res.ok, status: res.status, data };
+  } catch (err: any) {
+    console.error(`[safeFetch] Erro de rede para ${url}:`, err.message);
+    return { ok: false, status: 0, data: null };
+  }
+}
+
+// Atalho para fetches autenticados
+function authHeaders(token?: string): Record<string, string> {
+  if (token) return { Authorization: `Bearer ${token}` };
+  return {};
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONTROLLERS
+// ─────────────────────────────────────────────────────────────────────────────
+
 export async function ArcadeFirstLoginPage(req: Request, res: Response) {
   try {
     const arcadeTempId = req.params.arcadeTempId;
-    console.log("Página de Login de Administrador de Arcade");
-    console.log("Arcade Temp ID: " + arcadeTempId);
-    console.log("API URL: " + apiURL);
-
-    res.render("adminLogin", {
-      arcadeTempId: arcadeTempId,
-      apiURL: apiURL,
-    });
+    console.log("[ArcadeFirstLoginPage] Arcade Temp ID:", arcadeTempId);
+    res.render("adminLogin", { arcadeTempId, apiURL });
   } catch (error) {
-    console.log("Erro!");
-    if (axios.isAxiosError(error) && error.response) {
-      // Captura o código de status e a mensagem de erro
-      const statusCode = error.response.status; // Ex: 404
-      const statusText = error.response.statusText; // Ex: "Not Found"
-
-      // Renderiza a página de erro com as informações do erro
-      res.render("error", {
-        message: `Erro ${statusCode}: ${statusText}`,
-      });
-    } else {
-      // Para outros tipos de erro (como problemas de rede)
-      console.error("Erro inesperado:", (error as Error).message);
-
-      res.render("error", {
-        message: "Erro inesperado",
-      });
-    }
+    console.error("[ArcadeFirstLoginPage] Erro:", error);
+    res.render("error", { message: "Erro inesperado ao carregar a página de login." });
   }
 }
 
 export function PartnerLoginPage(req: Request, res: Response) {
-  res.render("partnerLogin", {
-    errorMessage: null,
-  });
+  res.render("partnerLogin", { errorMessage: null });
 }
 
 export async function PostPartnerLogin(req: Request, res: Response) {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.render("partnerLogin", {
-      errorMessage: "Usuário e senha são obrigatórios.",
-    });
+    return res.render("partnerLogin", { errorMessage: "Usuário e senha são obrigatórios." });
   }
 
   try {
@@ -59,239 +71,175 @@ export async function PostPartnerLogin(req: Request, res: Response) {
     );
 
     const token: string = loginResponse.data?.content?.token;
-
     if (!token) {
-      return res.render("partnerLogin", {
-        errorMessage: "Resposta inválida da API. Tente novamente.",
-      });
+      return res.render("partnerLogin", { errorMessage: "Resposta inválida da API. Tente novamente." });
     }
 
-    // Salva o JWT num cookie HttpOnly — inacessível via JS no browser
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 8 * 60 * 60 * 1000, // 8 horas (mesmo TTL do JWT)
+      maxAge: 8 * 60 * 60 * 1000,
       sameSite: "lax",
     });
 
-    // Decodifica o token para verificar a role
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64));
-    const decoded = JSON.parse(jsonPayload);
+    // Decodifica role do JWT sem biblioteca
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const decoded = JSON.parse(decodeURIComponent(atob(base64)));
+      if (decoded.role === "superadmin") return res.redirect("/dashboard/admin/master");
+    } catch (_) {}
 
-    if (decoded.role === 'superadmin') {
-      return res.redirect("/dashboard/admin/master");
-    }
     return res.redirect("/dashboard/arcade");
   } catch (error: any) {
     console.error("[PostPartnerLogin] Erro:", error?.message);
-
     const apiMessage =
       axios.isAxiosError(error) && error.response?.data?.content
         ? error.response.data.content
         : "Credenciais inválidas ou erro de conexão.";
-
-    return res.render("partnerLogin", {
-      errorMessage: apiMessage,
-    });
+    return res.render("partnerLogin", { errorMessage: apiMessage });
   }
 }
 
 export async function DashboardPage(req: Request, res: Response) {
-  // JWT enviado pelo browser via cookie após o login do parceiro
   const token = req.cookies?.token;
-
-  if (!token) {
-    return res.redirect("/dashboard/arcade/login");
-  }
+  if (!token) return res.redirect("/dashboard/arcade/login");
 
   try {
     // 1. Buscar Arcades do dono
-    const arcadesRes = await fetch(`${apiURL}/dashboard/admin/arcades`, {
-      headers: { Authorization: `Bearer ${token}` }
+    const arcadesResult = await safeFetch(`${apiURL}/dashboard/admin/arcades`, {
+      headers: authHeaders(token)
     });
-    if (!arcadesRes.ok) throw new Error('Falha ao carregar arcades');
-    const arcadesData = await arcadesRes.json() as any;
-    const arcades = arcadesData.content || [];
+    if (arcadesResult.status === 401) return res.redirect("/dashboard/arcade/login");
+    const arcades = arcadesResult.data?.content || [];
 
-    // 2. Buscar Catálogo de Jogos para traduzir IDs em Nomes
+    // 2. Buscar catálogo de jogos para traduzir IDs
     let gamesMap: Record<number, string> = {};
-    try {
-      const gamesRes = await fetch(`${apiURL}/games`);
-      if (gamesRes.ok) {
-        const gamesData = await gamesRes.json() as any;
-        // Cria um dicionário: { 1: "Space Squadron", 2: "Tetris" }
-        gamesData.content.forEach((game: any) => {
-          gamesMap[game.id] = game.title;
-        });
-      }
-    } catch (e) {
-      console.error('Aviso: Não foi possível carregar o catálogo de jogos.', e);
+    const gamesResult = await safeFetch(`${apiURL}/games`);
+    if (gamesResult.ok && Array.isArray(gamesResult.data?.content)) {
+      gamesResult.data.content.forEach((game: any) => {
+        if (game?.id) gamesMap[game.id] = game.title || `Jogo #${game.id}`;
+      });
     }
 
-    // 3. Buscar Métricas de cada Arcade e combinar tudo
+    // 3. Buscar métricas de cada arcade em paralelo
     const arcadesWithMetrics = await Promise.all(
       arcades.map(async (arcade: any) => {
-        try {
-          const metricsRes = await fetch(`${apiURL}/dashboard/arcade/${arcade.id}/metrics`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          const metricsData = await metricsRes.json() as any;
-          const metrics = metricsData.content;
-          
-          // Traduzir o ID para o Nome do Jogo
-          let gameName = "Nenhum";
-          if (metrics && metrics.currentGameId) {
-            gameName = gamesMap[metrics.currentGameId] || `Jogo #${metrics.currentGameId}`;
-          }
+        const metricsResult = await safeFetch(
+          `${apiURL}/dashboard/arcade/${arcade.id}/metrics`,
+          { headers: authHeaders(token) }
+        );
+        const metrics = metricsResult.ok ? (metricsResult.data?.content || null) : null;
+        const gameName = metrics?.currentGameId
+          ? (gamesMap[metrics.currentGameId] || `Jogo #${metrics.currentGameId}`)
+          : "Nenhum";
 
-          return { 
-            ...arcade, 
-            metrics, 
-            gameName, 
-            managementLink: `/dashboard/arcade/manage/${arcade.id}` 
-          };
-        } catch (error) {
-          return { 
-            ...arcade, 
-            metrics: null, 
-            gameName: "Erro de Conexão", 
-            managementLink: `/dashboard/arcade/manage/${arcade.id}` 
-          };
-        }
+        return {
+          ...arcade,
+          metrics,
+          gameName,
+          managementLink: `/dashboard/arcade/manage/${arcade.id}`,
+        };
       })
     );
 
-    // 4) Calcular totais para os cards de resumo
-    const activeMachines = arcadesWithMetrics.filter(
-      (a) => a.metrics?.status === "online"
-    ).length;
+    const activeMachines = arcadesWithMetrics.filter((a) => a.metrics?.status === "online").length;
+    const summary = { totalMachines: arcadesWithMetrics.length, activeMachines };
 
-    const summary = {
-      totalMachines: arcadesWithMetrics.length,
-      activeMachines,
-    };
-
-    res.render("arcadeDashboard", {
-      title: "Painel de Gestão",
-      arcades: arcadesWithMetrics,
-      summary,
-    });
+    res.render("arcadeDashboard", { title: "Painel de Gestão", arcades: arcadesWithMetrics, summary, user: (req as any).user });
   } catch (error: any) {
-    console.error("[DashboardPage] Erro ao buscar dados da API:", error?.message);
-
-    // Se a API retornar 401, redirecionar para login
-    if (error.status === 401) {
-      return res.redirect("/arcadeLogin");
-    }
-
-    // Renderizar a página com lista vazia para não travar o parceiro
+    console.error("[DashboardPage] Erro:", error?.message);
     res.render("arcadeDashboard", {
       title: "Painel de Gestão",
       arcades: [],
       summary: { totalMachines: 0, activeMachines: 0 },
       errorMessage: "Não foi possível conectar à API. Tente novamente mais tarde.",
+      user: (req as any).user,
     });
   }
 }
 
 export async function ManageArcadePage(req: any, res: any) {
+  const { id } = req.params;
+  const token = req.cookies?.token;
+
   try {
-    const { id } = req.params;
-    const token = req.cookies?.token;
+    // Métricas da máquina
+    const metricsResult = await safeFetch(
+      `${apiURL}/dashboard/arcade/${id}/metrics`,
+      { headers: authHeaders(token) }
+    );
+    const arcadeMetrics = {
+      status: "offline",
+      currentGameId: null,
+      currentPlayerId: null,
+      uptimeMinutes: 0,
+      totalSessions: 0,
+      ...(metricsResult.ok ? (metricsResult.data?.content || {}) : {}),
+    };
 
-    // Buscar Métricas Reais da Máquina
-    let arcadeMetrics: any = { status: 'offline', currentGameId: null, currentPlayerId: null, uptimeMinutes: 0, totalSessions: 0 };
-    try {
-      const metricsRes = await fetch(`${apiURL}/dashboard/arcade/${id}/metrics`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (metricsRes.ok) {
-        const data = await metricsRes.json() as any;
-        arcadeMetrics = { ...arcadeMetrics, ...(data.content || {}) };
-      }
-    } catch (e) {
-      console.error("[ManageArcadePage] Erro ao buscar métricas:", e);
-    }
+    // Detalhes da máquina
+    const detailsResult = await safeFetch(
+      `${apiURL}/dashboard/arcade/${id}`,
+      { headers: authHeaders(token) }
+    );
+    const arcadeDetails = {
+      id,
+      userId: null,
+      ...(detailsResult.ok ? (detailsResult.data?.content || {}) : {}),
+    };
 
-    // Buscar Detalhes da Máquina (para saber o dono)
-    let arcadeDetails: any = { id, userId: null };
-    try {
-      const detailsRes = await fetch(`${apiURL}/dashboard/arcade/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (detailsRes.ok) {
-        const detailsData = await detailsRes.json() as any;
-        arcadeDetails = { ...arcadeDetails, ...(detailsData.content || {}) };
-      }
-    } catch (e) {
-      console.error("[ManageArcadePage] Erro ao buscar detalhes:", e);
-    }
-
-    // Buscar Dono da Máquina
+    // Dono da máquina — LOG DETALHADO para diagnóstico
     let ownerName = "Desconhecido";
+    let ownerLink: string | null = null;
     if (arcadeDetails.userId) {
-      try {
-        const userRes = await fetch(`${apiURL}/users/${arcadeDetails.userId}`, { 
-          headers: { Authorization: `Bearer ${token}` } 
-        });
-        if (userRes.ok) {
-          const userData = await userRes.json() as any;
-          const user = userData.content || userData;
-          ownerName = user.name || user.username || `User #${arcadeDetails.userId}`;
-        } else {
-          ownerName = `User #${arcadeDetails.userId}`;
-        }
-      } catch (e) {
-        console.error("Erro ao buscar dados do dono da máquina", e);
-        ownerName = `User #${arcadeDetails.userId}`;
+      console.log(`[ManageArcadePage] Buscando dono: userId=${arcadeDetails.userId}`);
+      const userResult = await safeFetch(
+        `${apiURL}/users/${arcadeDetails.userId}`,
+        { headers: authHeaders(token) }
+      );
+      console.log(`[ManageArcadePage] Resposta /users/${arcadeDetails.userId}:`, JSON.stringify(userResult.data).slice(0, 300));
+      if (userResult.ok && userResult.data) {
+        const u = userResult.data?.content || userResult.data;
+        ownerName = u?.username || u?.name || u?.email || `Usuário #${arcadeDetails.userId}`;
+        ownerLink = `/player/${arcadeDetails.userId}`;
+      } else {
+        ownerName = `Usuário #${arcadeDetails.userId}`;
+        ownerLink = null;
       }
     }
 
-    // Fallback para nomes conhecidos
-    if (ownerName.startsWith("User #")) {
-      const mocks: Record<number, string> = { 1: "Black Hole Games (Sede)", 2: "Bar do Zé" };
-      ownerName = mocks[arcadeDetails?.userId] || ownerName;
-    }
-
-    // Buscar Jogo Atual
-    let currentGameName = "Aguardando Sincronização...";
+    // Jogo atual
+    let currentGameName = "Nenhum";
     if (arcadeMetrics.currentGameId) {
-      try {
-        const gameRes = await fetch(`${apiURL}/games/${arcadeMetrics.currentGameId}`);
-        if (gameRes.ok) {
-          const gData = await gameRes.json() as any;
-          currentGameName = gData.content?.title || gData.title || `Jogo ID ${arcadeMetrics.currentGameId}`;
-        }
-      } catch (e) {
-        console.error("[ManageArcadePage] Erro ao buscar jogo:", e);
+      const gameResult = await safeFetch(`${apiURL}/games/${arcadeMetrics.currentGameId}`);
+      if (gameResult.ok && gameResult.data) {
+        const g = gameResult.data?.content || gameResult.data;
+        currentGameName = g?.title || `Jogo #${arcadeMetrics.currentGameId}`;
       }
     }
 
-    // Buscar Jogador Atual
-    let currentPlayer = null;
+    // Jogador atual
+    let currentPlayer: any = null;
     if (arcadeMetrics.currentPlayerId) {
-      try {
-        const playerRes = await fetch(`${apiURL}/players/${arcadeMetrics.currentPlayerId}`);
-        if (playerRes.ok) {
-          const playerData = await playerRes.json() as any;
-          currentPlayer = playerData.content || playerData;
-        }
-      } catch(e) { console.error("Erro ao buscar jogador atual", e); }
+      const playerResult = await safeFetch(`${apiURL}/player/${arcadeMetrics.currentPlayerId}`);
+      if (playerResult.ok && playerResult.data) {
+        currentPlayer = playerResult.data?.content || playerResult.data;
+      }
     }
 
-    res.render('manageArcade', { 
+    res.render("manageArcade", {
       arcadeId: id,
       user: req.user,
       arcadeMetrics,
       arcadeDetails,
       ownerName,
+      ownerLink,
       currentGameName,
-      currentPlayer
+      currentPlayer,
     });
   } catch (error) {
-    console.error("Erro na rota manage arcade:", error);
+    console.error("[ManageArcadePage] Erro:", error);
     res.status(500).send("Erro interno ao carregar página de gerenciamento.");
   }
 }
@@ -300,50 +248,52 @@ export async function SuperAdminPage(req: Request, res: Response) {
   const token = req.cookies?.token;
 
   try {
-    // Buscar Métricas Reais da API
-    const metricsRes = await fetch(`${apiURL}/dashboard/admin/metrics`, {
-      headers: { Authorization: `Bearer ${token}` }
+    // Métricas globais
+    const metricsResult = await safeFetch(`${apiURL}/dashboard/admin/metrics`, {
+      headers: authHeaders(token)
     });
-    let globalMetrics = { totalMachines: 0, onlineMachines: 0, totalPlayers: 0 };
-    if (metricsRes.ok) {
-      const metricsData = await metricsRes.json() as any;
-      globalMetrics = metricsData.content || globalMetrics;
-    }
+    const globalMetrics = (metricsResult.ok && metricsResult.data?.content)
+      ? metricsResult.data.content
+      : { totalMachines: 0, onlineMachines: 0, totalPlayers: 0 };
 
-    // Buscar Catálogo de Jogos da Plataforma
-    const gamesRes = await fetch(`${apiURL}/games`);
-    let platformGames = [];
-    if (gamesRes.ok) {
-      const gamesData = await gamesRes.json() as any;
-      platformGames = gamesData.content || [];
-    }
+    // Catálogo de jogos
+    const gamesResult = await safeFetch(`${apiURL}/games`);
+    const platformGames = (gamesResult.ok && Array.isArray(gamesResult.data?.content))
+      ? gamesResult.data.content
+      : [];
 
-    // Buscar TODAS as máquinas da plataforma
-    const arcadesRes = await fetch(`${apiURL}/dashboard/admin/arcades`, {
-      headers: { Authorization: `Bearer ${token}` }
+    // Todas as máquinas
+    const arcadesResult = await safeFetch(`${apiURL}/dashboard/admin/arcades`, {
+      headers: authHeaders(token)
     });
-    let allArcades = [];
-    if (arcadesRes.ok) {
-      const arcadesData = await arcadesRes.json() as any;
-      allArcades = arcadesData.content || [];
-    }
+    let allArcades = (arcadesResult.ok && Array.isArray(arcadesResult.data?.content))
+      ? arcadesResult.data.content
+      : [];
 
-    // Buscar usuários para mapear nomes
+    // Mapeamento de usuários — LOG PESADO para diagnóstico
     let usersMap: Record<number, string> = {};
-    try {
-      const usersRes = await fetch(`${apiURL}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (usersRes.ok) {
-        const usersData = await usersRes.json() as any;
-        usersData.content.forEach((u: any) => { usersMap[u.id] = u.name || u.username || `User #${u.id}`; });
+    const usersResult = await safeFetch(`${apiURL}/users`, { headers: authHeaders(token) });
+    console.log("[SuperAdminPage] Resposta bruta de /users:", JSON.stringify(usersResult.data).slice(0, 500));
+    if (usersResult.ok && usersResult.data) {
+      const usersArray = usersResult.data?.content || usersResult.data;
+      if (Array.isArray(usersArray)) {
+        usersArray.forEach((u: any) => {
+          if (u?.id != null) {
+            usersMap[u.id] = u?.username || u?.name || u?.email || `Usuário #${u.id}`;
+          }
+        });
+      } else {
+        console.warn("[SuperAdminPage] /users não retornou um array:", typeof usersArray);
       }
-    } catch (e) { console.error("Erro ao buscar usuários", e); }
+    } else {
+      console.warn("[SuperAdminPage] Falha ao buscar /users. Status:", usersResult.status);
+    }
 
-    // Injetar ownerName em cada arcade com fallback seguro
+    // Injetar ownerName em cada arcade
     allArcades = allArcades.map((arc: any) => ({
       ...arc,
-      ownerName: arc.userId === 1 ? "Black Hole Games (Sede)" : (usersMap[arc.userId] || `Usuario #${arc.userId}`)
+      ownerName: usersMap[arc.userId] || `Usuário #${arc.userId || "?"}`,
+      managementLink: `/dashboard/arcade/manage/${arc.id}`,
     }));
 
     res.render("superAdminDashboard", {
@@ -351,9 +301,8 @@ export async function SuperAdminPage(req: Request, res: Response) {
       globalMetrics,
       platformGames,
       allArcades,
-      user: (req as any).user
+      user: (req as any).user,
     });
-
   } catch (error: any) {
     console.error("[SuperAdminPage] Erro:", error?.message);
     res.render("superAdminDashboard", {
@@ -362,43 +311,43 @@ export async function SuperAdminPage(req: Request, res: Response) {
       platformGames: [],
       allArcades: [],
       user: (req as any).user,
-      errorMessage: "Erro ao carregar métricas."
+      errorMessage: "Erro ao carregar métricas. Verifique a conexão com a API.",
     });
   }
 }
 
 export async function RegisterGamePage(req: Request, res: Response) {
-  res.render('registerGame', { user: (req as any).user, title: "Cadastrar Novo Jogo" });
+  res.render("registerGame", { user: (req as any).user, title: "Cadastrar Novo Jogo" });
 }
 
 export async function PostRegisterGame(req: Request, res: Response) {
   const { title, genre, description } = req.body;
   const token = req.cookies?.token;
 
-  try {
-    const response = await fetch(`${apiURL}/games`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': `Bearer ${token}` 
-      },
-      body: JSON.stringify({ title, genre, description })
+  if (!title) {
+    return res.render("registerGame", {
+      user: (req as any).user,
+      error: "O título do jogo é obrigatório.",
     });
-
-    if (response.ok) {
-      return res.redirect('/dashboard/admin/master');
-    } else {
-      const errorText = await response.text();
-      console.error("Erro da API (Raw):", errorText);
-      let message = "Erro ao cadastrar: A API retornou um erro inesperado.";
-      try {
-        const errorData = JSON.parse(errorText);
-        message = errorData.message || errorData.content || message;
-      } catch(e) {}
-      return res.render('registerGame', { user: (req as any).user, error: message });
-    }
-  } catch (error: any) {
-    console.error(error);
-    res.render('registerGame', { user: (req as any).user, error: error.message || "Erro ao cadastrar jogo." });
   }
+
+  const result = await safeFetch(`${apiURL}/games`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify({ title, genre, description }),
+  });
+
+  if (result.ok) {
+    return res.redirect("/dashboard/admin/master");
+  }
+
+  console.error("[PostRegisterGame] Erro da API:", JSON.stringify(result.data));
+  const message =
+    result.data?.message || result.data?.content || result.data?.error ||
+    `Erro ${result.status} ao cadastrar o jogo. Verifique os dados e tente novamente.`;
+
+  return res.render("registerGame", { user: (req as any).user, error: message });
 }

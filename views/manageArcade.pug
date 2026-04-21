@@ -33,7 +33,10 @@ block content
         .telemetry-item
           .telemetry-label Dono da Máquina
           .telemetry-value
-            a.text-info(href=`/player/${arcadeDetails.userId}`) #{ownerName}
+            if ownerLink
+              a.text-info(href=ownerLink) #{ownerName}
+            else
+              span.text-muted #{ownerName || 'Desconhecido'}
         .telemetry-item
           .telemetry-label Sessoes Hoje
           .telemetry-value= arcadeMetrics.totalSessions || 0
