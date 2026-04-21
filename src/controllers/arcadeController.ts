@@ -274,24 +274,21 @@ export async function SuperAdminPage(req: Request, res: Response) {
     }
 
     // Buscar usuários para mapear nomes
-    let usersMap = new Map();
+    let usersMap: Record<number, string> = {};
     try {
       const usersRes = await fetch(`${apiURL}/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (usersRes.ok) {
         const usersData = await usersRes.json() as any;
-        const usersList = usersData.content || [];
-        usersList.forEach((u: any) => usersMap.set(u.id, u.username || u.name || 'User #' + u.id));
+        usersData.content.forEach((u: any) => { usersMap[u.id] = u.name || u.username || `User #${u.id}`; });
       }
-    } catch (e) {
-      console.log("[SuperAdminPage] usuários não disponíveis, usando fallback");
-    }
+    } catch (e) { console.error("Erro ao buscar usuários", e); }
 
     // Injetar ownerName em cada arcade
     allArcades = allArcades.map((arcade: any) => ({
       ...arcade,
-      ownerName: arcade.user?.username || usersMap.get(arcade.userId) || 'Desconhecido'
+      ownerName: arcade.userId ? (usersMap[arcade.userId] || `User #${arcade.userId}`) : 'Desconhecido'
     }));
 
     res.render("superAdminDashboard", {
