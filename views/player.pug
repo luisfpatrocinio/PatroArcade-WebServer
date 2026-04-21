@@ -9,10 +9,9 @@ block content
             h1 #{playerData.name}
             if isOnline
               .status-badge.mb-2
-                span.badge.bg-success.pulse.me-2 Online
-                span.text-warning Jogando agora: #{currentGameName}
-            else
-              span.badge.bg-secondary Offline
+                span.badge.bg-success.pulse.mb-2 Online
+                if currentGameName
+                  p.text-warning Jogando agora: #{currentGameName}
 
             div
                 h3 #{playerData.bio}

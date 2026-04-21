@@ -33,8 +33,8 @@ block content
         .telemetry-item
           .telemetry-label Dono da Máquina
           .telemetry-value
-            if ownerLink
-              a.text-info(href=ownerLink) #{ownerName}
+            if arcadeDetails && arcadeDetails.userId
+              a.text-info(href=`/player/${arcadeDetails.userId}`) #{ownerName || 'Desconhecido'}
             else
               span.text-muted #{ownerName || 'Desconhecido'}
         .telemetry-item
@@ -54,13 +54,23 @@ block content
         a.returnButton(href="/dashboard/arcade") Voltar ao Painel
 
   script.
-    document.addEventListener('DOMContentLoaded', function() {
-      var currentMachineStatus = '#{arcadeMetrics.status}';
-      function HandleTelemetryUpdate() {
-        console.log('Telemetry running for machine #{arcadeId}');
-      }
-      setInterval(HandleTelemetryUpdate, 5000);
-    });
+    setInterval(async () => {
+      try {
+        const res = await fetch(window.location.href);
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        const statsToUpdate = ['.status-indicator', '.stat-row', '.telemetry-item'];
+        statsToUpdate.forEach(selector => {
+          const news = doc.querySelectorAll(selector);
+          const olds = document.querySelectorAll(selector);
+          for(let i = 0; i < olds.length; i++) {
+            if(news[i]) olds[i].innerHTML = news[i].innerHTML;
+          }
+        });
+      } catch(e) {}
+    }, 5000);
 
   script.
     function HandleFeatureDevelopment(featureName) {
