@@ -21,25 +21,14 @@ block content
           .telemetry-label Jogo Atual
           .telemetry-value.text-warning= currentGameName
         .telemetry-item
-          .telemetry-label Jogador Atual
-          .telemetry-value
-            if currentPlayer
-              a.text-info(href=`/player/${currentPlayer.id}`) #{currentPlayer.name} (ID: #{currentPlayer.id})
-            else
-              span.text-muted Nenhum (Livre)
-        .telemetry-item
-          .telemetry-label Tempo de Atividade
-          .telemetry-value= arcadeMetrics.uptimeMinutes ? arcadeMetrics.uptimeMinutes + ' min' : '0 min'
-        .telemetry-item
           .telemetry-label Dono da Máquina
-          .telemetry-value
-            if arcadeDetails && arcadeDetails.userId
-              a.text-info(href=`/player/${arcadeDetails.userId}`) #{ownerName || 'Desconhecido'}
-            else
-              span.text-muted #{ownerName || 'Desconhecido'}
+          .telemetry-value.text-light #{ownerName}
         .telemetry-item
-          .telemetry-label Sessoes Hoje
-          .telemetry-value= arcadeMetrics.totalSessions || 0
+          .telemetry-label Sessões Hoje
+          .telemetry-value.text-light #{arcadeMetrics.totalSessions || 0}
+        .telemetry-item
+          .telemetry-label Jogador Atual
+          .telemetry-value.text-info #{currentPlayer ? currentPlayer.name : 'Nenhum'}
 
     section#controlPanel
       h3 Controle Remoto
