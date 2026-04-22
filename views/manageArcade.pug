@@ -17,8 +17,13 @@ block content
         .telemetry-item
           .telemetry-label Status de Operacao
           .telemetry-value(class=arcadeMetrics.status)= arcadeMetrics.status
+        - var isOnline = arcadeMetrics && arcadeMetrics.status === 'online'
+
         .telemetry-item
-          .telemetry-label Jogo Atual
+          if isOnline
+            .telemetry-label Jogo Atual
+          else
+            .telemetry-label Último Jogo Jogado
           .telemetry-value.text-warning= currentGameName
         .telemetry-item
           .telemetry-label Dono da Máquina
@@ -26,9 +31,10 @@ block content
         .telemetry-item
           .telemetry-label Sessões Hoje
           .telemetry-value.text-light #{arcadeMetrics.totalSessions || 0}
-        .telemetry-item
-          .telemetry-label Jogador Atual
-          .telemetry-value.text-info #{currentPlayer ? currentPlayer.name : 'Nenhum'}
+        if isOnline
+          .telemetry-item
+            .telemetry-label Jogador Atual
+            .telemetry-value.text-info #{currentPlayer ? currentPlayer.name : 'Nenhum'}
 
     section#controlPanel
       h3 Controle Remoto
