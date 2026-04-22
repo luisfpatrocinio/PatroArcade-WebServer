@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
-const apiURL = process.env.APIURL || "http://localhost:3001";
+// NOTA TÉCNICA (DevOps): O WebServer está configurado para bater na raiz da API (ex: /player).
+// Se a sua API usa prefixo de versão como /api/v1/player, altere o ficheiro .env:
+//   APIURL=http://localhost:3001/api/v1
+const rawApiUrl = process.env.APIURL || "http://localhost:3001";
+const apiURL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
 
 async function safeFetch(
   url: string,

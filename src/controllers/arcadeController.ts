@@ -1,7 +1,12 @@
 import axios from "axios";
 import { Request, Response } from "express";
 
-const apiURL = process.env.APIURL || "http://localhost:3001";
+// NOTA TÉCNICA (DevOps): O WebServer está configurado para bater na raiz da API (ex: /games).
+// Se a sua API usa prefixo de versão como /api/v1/games, você DEVE alterar o ficheiro .env:
+//   APIURL=http://localhost:3001/api/v1
+// O WebServer removerá automaticamente a barra final para evitar URLs duplicadas (ex: //users).
+const rawApiUrl = process.env.APIURL || "http://localhost:3001";
+const apiURL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UTILITÁRIO: Fetch blindado — nunca explode com "Unexpected token <"
