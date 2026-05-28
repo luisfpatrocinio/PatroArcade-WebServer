@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export function loginCallback(req: Request, res: Response) {
+export function LoginCallback(req: Request, res: Response) {
     // Pega os dados que a API mandou via URL
     const { token, playerId } = req.query;
 

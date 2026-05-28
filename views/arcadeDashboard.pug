@@ -1,0 +1,45 @@
+extends base.pug
+
+block content
+  section#arcadeDashboard
+    h1 Painel de Gestão
+
+    if errorMessage
+      .alert.alert-danger= errorMessage
+
+    if message
+      .alert.alert-warning= message
+
+    section#statsSection
+      h2 Suas Métricas
+      .metric-card
+        .metric-label Total de Máquinas
+        .metric-value= summary.totalMachines
+      .metric-card
+        .metric-label Máquinas Online
+        .metric-value.online= summary.activeMachines
+
+    section#myMachines
+      h2 Suas Máquinas
+      if arcades && arcades.length > 0
+        .games-vertical
+          each arcade in arcades
+            .arcade-card.mb-3
+              .diagnostic-header.mb-2
+                h3.text-info(style="margin:0;") Máquina ID: #{arcade.id}
+                .status-indicator
+                  span.pulse(class=arcade.metrics && arcade.metrics.status === 'online' ? 'online' : 'offline')
+                  span.status-text(class=arcade.metrics && arcade.metrics.status === 'online' ? 'online' : 'offline') #{arcade.metrics ? arcade.metrics.status : 'offline'}
+              .stat-row
+                .label Jogo Atual
+                .value.text-warning #{arcade.gameName && arcade.gameName !== 'Nenhum' ? arcade.gameName : 'Aguardando Sincronização...'}
+              .stat-row
+                .label Uptime
+                .value #{arcade.metrics && arcade.metrics.uptimeMinutes ? arcade.metrics.uptimeMinutes + ' min' : '0 min'}
+              .mt-3
+                a.btn.btn-outline-info.w-100(href=arcade.managementLink style="display:block; text-align:center; padding:10px; border-radius:5px;") Acessar Terminal
+      else
+        p.text-muted.text-center Nenhuma máquina associada à sua conta.
+
+    .back-button-container
+      a.returnButton(href="/") Sair

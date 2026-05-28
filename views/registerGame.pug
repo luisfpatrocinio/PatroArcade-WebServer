@@ -1,0 +1,20 @@
+extends base.pug
+
+block content
+  section#registerGamePanel.mt-5(style="max-width: 600px; margin: auto;")
+    h2.text-info.mb-4 Cadastrar Novo Jogo
+    if error
+      .alert.alert-danger= error
+    form(action="/dashboard/admin/master/games/new" method="POST")
+      .mb-3
+        label.form-label.text-light(for="title") Título do Jogo
+        input#title.form-control.bg-dark.text-light.border-secondary(type="text" name="title" required)
+      .mb-3
+        label.form-label.text-light(for="genre") Gênero
+        input#genre.form-control.bg-dark.text-light.border-secondary(type="text" name="genre" required)
+      .mb-3
+        label.form-label.text-light(for="description") Descrição
+        textarea#description.form-control.bg-dark.text-light.border-secondary(name="description" rows="5" style="resize: none;")
+      button.btn.btn-success.w-100.py-2.mt-3(type="submit") Salvar Jogo
+    .mt-4.text-center
+      a.returnButton(href="/dashboard/admin/master") Voltar

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { loginPage } from "../controllers/loginController";
-import { loginCallback } from "../controllers/authClientController";
+import { LoginPage } from "../controllers/loginController";
+import { LoginCallback } from "../controllers/authClientController";
 
 const router = Router();
 
-router.get("/callback", loginCallback);
+router.get("/callback", LoginCallback);
 
-router.get("/:arcadeId", loginPage);
+router.get("/:arcadeId", LoginPage);
 
 export { router as loginRoutes };

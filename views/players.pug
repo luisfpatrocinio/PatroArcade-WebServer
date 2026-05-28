@@ -1,19 +1,36 @@
-//- Essa página vai ser carregada com playerDatabase
-
 extends base.pug
 
-block headExtra 
-    title Listagem de Jogadores 
+block headExtra
+  title Hall da Fama
 
-block content 
-    section
-        h2 Jogadores
-            ul
-                each player in playerDatabase
-                    li.gameListItem
-                        a(href=`/player/${player.userId}`)= player.name
-    div.returnButton
-        a(id="home-button" href="#") Voltar para a Home
+block content
+  .container.py-4
+    section#playersList
+      h2.text-center.mb-4 Hall da Fama - Jogadores
+      if playerDatabase && playerDatabase.length > 0
+        each playerData in playerDatabase
+          .card.bg-dark.border-secondary.mb-3.shadow
+            .card-body
+              .player-row
+                .player-info
+                  a.text-info.fw-bold(href=`/player/${playerData.id || playerData.userId}`)= playerData.name
+                .player-meta
+                  if playerData.lastGameId || playerData.lastGame
+                    - const gId = playerData.lastGameId || (playerData.lastGame && (playerData.lastGame.id || playerData.lastGame))
+                    - const gTitle = (playerData.lastGame && playerData.lastGame.title) || 'Jogo #' + (playerData.lastGameId || (playerData.lastGame && (playerData.lastGame.id || playerData.lastGame)))
+                    a.text-warning(href=`/game/${gId}`)= gTitle
+                  else
+                    span.text-muted Nenhum
+                .player-login
+                  if playerData.lastLogin
+                    span.text-muted= new Date(playerData.lastLogin).toLocaleDateString('pt-BR')
+                  else
+                    span.text-muted Recentemente
+      else
+        p.text-muted.text-center Nenhum jogador cadastrado no momento.
+
+    .back-button-container.mt-4
+      a#home-button.returnButton(href="/") Voltar ao Início
 
 block scripts
-    script(src="/scripts/playersPage.js")
+  script(src="/scripts/playersPage.js")

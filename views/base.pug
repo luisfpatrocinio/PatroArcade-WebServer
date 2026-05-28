@@ -1,32 +1,36 @@
 doctype html 
-html 
+html(lang="pt-br")
     head 
         //- Bloco Head Extra
         block headExtra 
 
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet")
         //- Sobrescrever CSS
         link(rel="stylesheet", href="/styles.css")
-
-        //- Adicionando uma imagem de título
-        .appHeader
-            img(src="/assets/patroArcadeLogo.png", alt="PatroArcade Logo")
     
     body
+        //- Fundo de estrelas
         .stars
+
+        header.appHeader
+            a(href="/")
+                img(src="/assets/patroArcadeLogo.png" alt="PatroArcade Logo" style="height: 60px; object-fit: contain;")
 
         //- Bloco de Conteúdo 
         block content 
 
-        //- Um rodapé
-        footer 
-            p © 2025 - PatroArcade - Todos os direitos reservados.
-            <a href="https://github.com/luisfpatrocinio">GitHub</a>
-            <a href="https://www.textstudio.com/">Font generator</a>
+        footer.footer.mt-auto.py-4.bg-dark.border-top.border-secondary
+          .container.text-center
+            p.text-muted.mb-2 © 2026 PatroArcade. Todos os direitos reservados.
+            if !user || (user.role !== 'admin' && user.role !== 'superadmin')
+              a.btn.btn-outline-primary.btn-sm.mt-2(href="/dashboard/arcade/login") Área do Parceiro
+            
+        //- Adicionalmente, você pode adicionar links úteis no rodapé se desejar
+        //- a(href="https://github.com/luisfpatrocinio" class="text-muted mx-2") GitHub
             
         //- Adicionar algum script adicional
         block scripts 
-            
-            //- // Scripts comum a todas as páginas
-            //- script(src="/scripts/main.js")
         
-        
+        script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")

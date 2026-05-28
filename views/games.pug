@@ -1,19 +1,22 @@
-//- Essa página vai iniciar com um array de jogos gameDatabase
-
 extends base.pug
 
-block headExtra 
-    title Listagem de Jogos 
+block headExtra
+  title Catálogo de Jogos
 
-block content 
-    section
-        h2 Jogos
-            ul
-                each game in gameDatabase
-                    li.gameListItem
-                        a(href=`/game/${game.id}`).game-link= game.title
-    div.returnButton
-        a(id="home-button" href="#") Voltar
+block content
+  section#gamesList
+    h2 Catálogo de Jogos
+    if gameDatabase && gameDatabase.length > 0
+      each gameData in gameDatabase
+        .card.bg-dark.border-secondary.mb-4.p-4.shadow
+          .game-title= gameData.title
+          .game-genre= 'Gênero: ' + (gameData.genre || 'Arcade')
+          a.btn-outline-info.d-block.mt-3(href=`/game/${gameData.id}`) Ver Detalhes
+    else
+      .alert.alert-warning Nenhum jogo disponível no momento.
+
+  .back-button-container
+    a.returnButton(href="/") Voltar ao Início
 
 block scripts
-    script(src="/scripts/gamesPage.js")
+  script(src="/scripts/gamesPage.js")

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 
 const apiURL = process.env.APIURL || "http://localhost:3001";
 
-export async function playersPage(req: Request, res: Response) {
+export async function PlayersPage(req: Request, res: Response) {
   try {
     console.log("Carregando listagem de perfis...");
 

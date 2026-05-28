@@ -8,3 +8,4 @@ _obsolete
 diff.txt
 # Ignore the distribution/build output directory at project root
 /dist
+*.log

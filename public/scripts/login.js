@@ -1,6 +1,9 @@
-document.querySelector("#submitButton").addEventListener("click", function () {
+document.querySelector("#submitButton").addEventListener("click", HandleLoginSubmit);
+document.querySelector("#adminSubmitButton").style.display = "none";
+
+function HandleLoginSubmit() {
   const feedbackElement = document.getElementById("feedback-message");
-  feedbackElement.textContent = ""; // (Limpa erros antigos)
+  feedbackElement.textContent = "";
 
   const username = document.querySelector("#username").value;
   const password = document.querySelector("#password").value;
@@ -28,16 +31,4 @@ document.querySelector("#submitButton").addEventListener("click", function () {
       console.error("Error:", error);
       feedbackElement.textContent = "Ocorreu um erro. Tente novamente.";
     });
-});
-
-// if (arcadeTempId) {
-//   document.querySelector("#adminSubmitButton").textContent =
-//     "Entrar como Admin: " + arcadeTempId;
-//   document.querySelector("#submitButton").style.display = "none";
-// }
-
-// if (!arcadeTempId) {
-//   document.querySelector("#adminSubmitButton").style.display = "none";
-// }
-
-document.querySelector("#adminSubmitButton").style.display = "none";
+}

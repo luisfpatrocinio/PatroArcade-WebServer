@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { playerPage } from "../controllers/playerController";
+import { PlayerPage } from "../controllers/playerController";
 
 const router = Router();
 
-router.get("/:playerId", playerPage);
+// Rota de perfil do player
+router.get("/:playerId", PlayerPage);
 
 export { router as playerRoutes };

@@ -1,0 +1,74 @@
+extends base.pug
+
+block headExtra
+  title Diagnostic - Maquina #{arcadeId}
+
+block content
+  section#machineDiagnostic
+    .diagnostic-header
+      h2 Maquina ##{arcadeId}
+      .status-indicator
+        span.pulse(class=arcadeMetrics.status === 'online' ? 'online' : 'offline')
+        span.status-text(class=arcadeMetrics.status)= arcadeMetrics.status
+
+    section#systemStatus
+      h3 Status do Sistema
+      .telemetry-list
+        .telemetry-item
+          .telemetry-label Status de Operacao
+          .telemetry-value(class=arcadeMetrics.status)= arcadeMetrics.status
+        - var isOnline = arcadeMetrics && arcadeMetrics.status === 'online'
+
+        .telemetry-item
+          if isOnline
+            .telemetry-label Jogo Atual
+          else
+            .telemetry-label Último Jogo Jogado
+          .telemetry-value.text-warning= currentGameName
+        .telemetry-item
+          .telemetry-label Dono da Máquina
+          .telemetry-value.text-light #{ownerName}
+        .telemetry-item
+          .telemetry-label Sessões Hoje
+          .telemetry-value.text-light #{arcadeMetrics.totalSessions || 0}
+        if isOnline
+          .telemetry-item
+            .telemetry-label Jogador Atual
+            .telemetry-value.text-info #{currentPlayer ? currentPlayer.name : 'Nenhum'}
+
+    section#controlPanel
+      h3 Controle Remoto
+      .action-buttons
+        button.actionButton.btn-danger(type="button" onclick="HandleFeatureDevelopment('Desligar Máquina Remota')") Desligar Maquina
+        button.actionButton.btn-success(type="button" onclick="HandleFeatureDevelopment('Atualizar Jogo Remoto')") Atualizar Jogo
+
+    .back-button-container
+      if user && user.role === 'superadmin'
+        a.returnButton(href="/dashboard/admin/master") Voltar ao Painel Supremo
+      else
+        a.returnButton(href="/dashboard/arcade") Voltar ao Painel
+
+  script.
+    setInterval(async () => {
+      try {
+        const res = await fetch(window.location.href);
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        const statsToUpdate = ['.status-indicator', '.stat-row', '.telemetry-item'];
+        statsToUpdate.forEach(selector => {
+          const news = doc.querySelectorAll(selector);
+          const olds = document.querySelectorAll(selector);
+          for(let i = 0; i < olds.length; i++) {
+            if(news[i]) olds[i].innerHTML = news[i].innerHTML;
+          }
+        });
+      } catch(e) {}
+    }, 5000);
+
+  script.
+    function HandleFeatureDevelopment(featureName) {
+      alert('A funcionalidade [' + featureName + '] está marcada no sistema e em fase de desenvolvimento pelo Patrocinio.');
+      console.log('Log Técnico: Handler para ' + featureName + ' pronto para implementação de WebSocket.');
+    }
